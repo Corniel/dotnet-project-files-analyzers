@@ -46,6 +46,7 @@ public sealed class INI_grammar : Grammar
         | header_line
         | comment_line;
 
-    private static bool IsWhiteSpace(char ch) => ch == ' ' || ch == '\t';
+    public static readonly Tokens file = line.Star;
 
+    private static bool IsWhiteSpace(char ch) => ch == ' ' || ch == '\t';
 }

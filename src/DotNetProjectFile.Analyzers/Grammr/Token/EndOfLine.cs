@@ -10,7 +10,7 @@ internal sealed class EndOfLine(string? kind) : Token(kind)
     public override int Match(SourceSpan source) => source switch
     {
         _ when source.StartsWith("\r\n").HasValue => 2,
-        _ when source[0] == '\n' => 1,
+        _ when source.HasValue && source[0] == '\n' => 1,
         _ => 0,
     };
 }

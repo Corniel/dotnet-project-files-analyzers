@@ -9,5 +9,6 @@ internal sealed class Char(char ch, string? kind) : Token(kind)
 
     /// <inheritdoc />
     [Pure]
-    public override int Match(SourceSpan source) => source[0] == Ch ? 1 : 0;
+    public override int Match(SourceSpan source)
+        => source.HasValue && source[0] == Ch ? 1 : 0;
 }

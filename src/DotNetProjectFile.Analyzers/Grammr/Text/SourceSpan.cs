@@ -117,8 +117,6 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
             ? new TextSpan(Span.Start, 1)
             : NoMatch;
 
-        SourceSpanLogger.Log(SourceText, Span, result, () => $"StartsWith('{ch}')");
-
         return result;
     }
 
@@ -140,17 +138,13 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
             {
                 if (SourceText[pos++] != str[i])
                 {
-                    SourceSpanLogger.Log(SourceText, Span, NoMatch, () => $"StartsWith(\"{str}\")");
                     return NoMatch;
                 }
             }
-            var result = new TextSpan(Span.Start, str.Length);
-            SourceSpanLogger.Log(SourceText, Span, result, () => $"StartsWith(\"{str}\")");
-            return result;
+            return new TextSpan(Span.Start, str.Length);
         }
         else
         {
-            SourceSpanLogger.Log(SourceText, Span, NoMatch, () => $"StartsWith(\"{str}\")");
             return NoMatch;
         }
     }
@@ -167,7 +161,6 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
     {
         if (IsEmpty)
         {
-            SourceSpanLogger.Log(SourceText, Span, NoMatch, match);
             return NoMatch;
         }
 
@@ -178,18 +171,11 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
         {
             if (!match(SourceText[i++]))
             {
-                var result = (len == 0)
+                return (len == 0)
                     ? NoMatch
                     : new(Span.Start, len);
-
-                SourceSpanLogger.Log(SourceText, Span, result, match);
-
-                return result;
             }
         }
-
-        SourceSpanLogger.Log(SourceText, Span, Span, match);
-
         return Span;
     }
 
@@ -214,13 +200,9 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
             throw new InvalidPattern($"Pattern '{regex}' did match from the start.");
         }
 
-        var result = match.Success
+        return match.Success
             ? new(Span.Start, match.Length)
             : NoMatch;
-
-        SourceSpanLogger.Log(SourceText, span, result, () => $"Regex({regex})");
-
-        return result;
     }
 
     /// <inheritdoc />

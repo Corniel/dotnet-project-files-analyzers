@@ -2,16 +2,23 @@ namespace Grammr;
 
 [DebuggerTypeProxy(typeof(CollectionDebugView))]
 [DebuggerDisplay("Count = {Count}")]
-public readonly struct ResultCollection<TResult> : IReadOnlyCollection<TResult>
+public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
     where TResult : struct, GrammarResult
 {
     public static readonly ResultCollection<TResult> Empty = new([]);
 
-    private readonly TResult[] Items;
-
     private ResultCollection(TResult[] items) => Items = items;
 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private readonly TResult[] Items;
+
+    /// <inheritdoc />
+    public int Count => Items.Length;
+
     public bool Success => Items.Length != 0 && Items[0].Success;
+
+    /// <inheritdoc />
+    public TResult this[int index] => Items[index];
 
     [Pure]
     public ResultCollection<TResult> Add(TResult result)
@@ -41,9 +48,6 @@ public readonly struct ResultCollection<TResult> : IReadOnlyCollection<TResult>
         Array.Sort(items, Comparer);
         return new(items);
     }
-
-    /// <inheritdoc />
-    public int Count => Items.Length;
 
     /// <inheritdoc />
     [Pure]

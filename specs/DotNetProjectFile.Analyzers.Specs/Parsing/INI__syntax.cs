@@ -11,14 +11,16 @@ public class Tokenizes
     {
         var span = Source.Span("[My Header] \r\n");
 
-        //var tokens = INI_grammar.Tokenizer.Tokenize(span);
+        var tokens = INI_grammar.file.Tokenize(span);
+
+        ((object)tokens[0]).Should().BeEquivalentTo(new
+        {
+            Success = true,
+            Remaining = new { Length = 0 },
+            Tokens = new { Length = 5 },
+        });
     }
 
-    [Test]
-    public void X()
-    {
-        INI_grammar.Colon.Kind.Should().Be("Colon");
-    }
 }
 
 //public class Parses
