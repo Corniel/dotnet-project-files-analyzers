@@ -66,7 +66,6 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
             currs = nexts;
         }
 
-
         return final;
     }
 }
