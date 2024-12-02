@@ -6,17 +6,62 @@ public static class Tokenizer
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView))]
-    public readonly record struct Result(
-        ImmutableArray<SourceSpanToken> Tokens,
-        SourceSpan Remaining,
-        bool Success,
-        string? Message) : GrammarResult, IReadOnlyList<SourceSpanToken>
+    public readonly struct Result : GrammarResult, IReadOnlyList<SourceSpanToken>, IEquatable<Result>
     {
+        private Result(
+        ImmutableArray<SourceSpanToken> tokens,
+        SourceSpan remaining,
+        bool success,
+        string? message)
+        {
+            Tokens = tokens;
+            Remaining = remaining;
+            Success = success;
+            Message = message;
+        }
+
+        public ImmutableArray<SourceSpanToken> Tokens { get; }
+
+        /// <inheritdoc />
+        public SourceSpan Remaining { get; }
+
+        /// <inheritdoc />
+        public bool Success { get; }
+
+        public string? Message { get; }
+
         /// <inheritdoc />
         public int Count => Tokens.Length;
 
         /// <inheritdoc />
         public SourceSpanToken this[int index] => Tokens[index];
+
+        /// <inheritdoc />
+        [Pure]
+        public override bool Equals(object? obj) => obj is Result other && Equals(other);
+
+        /// <inheritdoc />
+        [Pure]
+        public bool Equals(Result other)
+            => Success == other.Success
+            && Remaining.Length == other.Remaining.Length
+            && Enumerable.SequenceEqual(Tokens, other.Tokens);
+
+        /// <inheritdoc />
+        [Pure]
+        public override int GetHashCode()
+        {
+            var hash = Success.GetHashCode();
+            hash ^= (Message ?? string.Empty).GetHashCode();
+            hash ^= hash * 17 + Remaining.Length;
+
+            foreach (var token in Tokens)
+            {
+                hash *= 17;
+                hash ^= token.GetHashCode();
+            }
+            return hash;
+        }
 
         /// <inheritdoc />
         [Pure]
@@ -26,10 +71,18 @@ public static class Tokenizer
         [Pure]
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        [Pure]
+        public override string ToString() => DebuggerDisplay;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => Success
-            ? $"Tokens = {Tokens.Length}, Remaining = {Remaining.Length}"
-            : $"Failure = {Message}, Remaining = {Remaining.Length}";
+            ? $"Tokens = {Tokens.Length} {(Tokens.Any() ? $" ({Format(Tokens[^1].Text)})" : "")}, Remaining = {Remaining.Length} ({RemainingText()})"
+            : $"Failure = {Message}, Remaining = {Remaining.Length} ({RemainingText()})";
+
+        private string RemainingText() => Format(Remaining.Length >= 16
+            ? Remaining.Text[0..10] + "..."
+            : Remaining.Text);
+
+        private static string Format(string str) => str.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t");
 
         [Pure]
         public static Result Successful(SourceSpan remainder, params IEnumerable<SourceSpanToken> tokens)

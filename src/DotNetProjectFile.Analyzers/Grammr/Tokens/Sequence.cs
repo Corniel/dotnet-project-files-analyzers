@@ -12,11 +12,19 @@ internal sealed class Sequence(ImmutableArray<Tokens> sequances) : Tokens
     [Pure]
     public override ResultCollection<Tokenizer.Result> Tokenize(SourceSpan source)
     {
+        var final = ResultCollection<Tokenizer.Result>.Empty;
         var currs = ResultCollection<Tokenizer.Result>.Empty;
 
         foreach (var result in Sequances[0].Tokenize(source))
         {
-            currs = currs.Add(result);
+            if (result.Success)
+            {
+                currs = currs.Add(result);
+            }
+            else
+            {
+                final = final.Add(result);
+            }
         }
 
         foreach (var sequance in Sequances[1..])
@@ -25,21 +33,27 @@ internal sealed class Sequence(ImmutableArray<Tokens> sequances) : Tokens
 
             foreach (var curr in currs)
             {
-                if (curr.Success)
+                foreach (var result in sequance.Tokenize(curr.Remaining))
                 {
-                    foreach (var result in sequance.Tokenize(curr.Remaining))
+                    var merged = curr.Merge(result);
+                    if (merged.Success)
                     {
-                        nexts = nexts.Add(curr.Merge(result));
+                        nexts = nexts.Add(merged);
                     }
-                }
-                else
-                {
-                    nexts = nexts.Add(curr);
+                    else
+                    {
+                        final = final.Add(merged);
+                    }
                 }
             }
             currs = nexts;
         }
 
-        return currs;
+        foreach (var curr in currs)
+        {
+            final = final.Add(curr);
+        }
+
+        return final;
     }
 }

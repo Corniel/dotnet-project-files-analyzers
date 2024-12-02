@@ -12,8 +12,10 @@ public sealed class INI_grammar : Grammar
     public static readonly Token HeaderText = regex(@"[^[\]]*");
     public static readonly Token Colon = ch(':');
     public static readonly Token Equal = ch('=');
-    public static readonly Token Word = regex("[\\w.-]+");
+    public static readonly Token Key = regex(@"[^\s=:#;]+");
+    public static readonly Token Value = regex(@"[^\s#;]+");
 
+    public static readonly Tokens end = EndOfLine | eof;
     public static readonly Tokens ws = WhiteSpace.Option;
 
     public static readonly Tokens ws_line = ws & EndOfLine;
@@ -25,20 +27,20 @@ public sealed class INI_grammar : Grammar
         & HeaderEnd
         & ws
         & Comment.Option
-        & EndOfLine.Option;
+        & end;
 
-    public static readonly Tokens comment_line = ws & Comment & EndOfLine.Option;
+    public static readonly Tokens comment_line = ws & Comment & end;
 
     public static readonly Tokens kvp_line =
         ws
-        & Word
+        & Key
         & ws
         & (Equal | Colon)
         & ws
-        & Word
+        & Value
         & ws
-        & Colon.Option
-        & EndOfLine.Option;
+        & Comment.Option
+        & end;
 
     public static readonly Tokens line =
         ws_line

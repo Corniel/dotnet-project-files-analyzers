@@ -4,7 +4,7 @@ namespace Grammr.Text;
 
 /// <summary>Represents a syntax token.</summary>
 [DebuggerDisplay("{DebuggerDisplay}")]
-public readonly struct SourceSpanToken(SourceSpan sourceSpan, string? kind = null)
+public readonly struct SourceSpanToken(SourceSpan sourceSpan, string? kind = null) : IEquatable<SourceSpanToken>
 {
     /// <summary>The (selected) source span.</summary>
     public readonly SourceSpan SourceSpan = sourceSpan;
@@ -27,6 +27,22 @@ public readonly struct SourceSpanToken(SourceSpan sourceSpan, string? kind = nul
     /// <inheritdoc />
     [Pure]
     public override string ToString() => Text;
+
+    /// <inheritdoc />
+    [Pure]
+    public override bool Equals(object? obj) => obj is SourceSpanToken other && Equals(other);
+
+    /// <inheritdoc />
+    [Pure]
+    public bool Equals(SourceSpanToken other)
+        => Kind == other.Kind
+        && Span == other.Span;
+
+    /// <inheritdoc />
+    [Pure]
+    public override int GetHashCode() 
+        => (Kind ?? string.Empty).GetHashCode() 
+        ^ Span.GetHashCode();
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string DebuggerDisplay

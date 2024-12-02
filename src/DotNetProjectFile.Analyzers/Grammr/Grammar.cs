@@ -7,6 +7,8 @@ namespace Grammr;
 [Inheritable]
 public class Grammar
 {
+    public static readonly Tokens eof = new EndOfFile();
+
     /// <summary>End of Line.</summary>
     public static Token eol([CallerMemberName] string? kind = null) => new EndOfLine(kind);
 

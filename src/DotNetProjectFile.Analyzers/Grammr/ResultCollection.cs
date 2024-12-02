@@ -23,20 +23,22 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
     [Pure]
     public ResultCollection<TResult> Add(TResult result)
     {
-        // If empty always add.
         if (Count == 0)
         {
             return new([result]);
         }
+
         var first = Comparer.Compare(result, Items[0]);
 
         return (first, result.Success, Success) switch
         {
             // Failure is not better.
-            (>= 0, false, _) => this,
+            ( >= 0, false, _) => this,
 
             // Best is not successful, and result is better.
-            (< 0, _, false) => new([result, .. Items.Skip(1)]),
+            ( < 0, _, false) => new([result, .. Items.Skip(1)]),
+
+            _ when Items.Contains(result) => this,
 
             // Add result to existing cases.
             _ => Sort([result, .. Items]),
@@ -67,8 +69,11 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
 
             if (compare == 0)
             {
-                // with the same length, failure first.
-                compare = x.Success.CompareTo(y.Success);
+                // with the same length, failure first
+                // unless we're done.
+                compare = x.Remaining.Length == 0
+                    ? y.Success.CompareTo(x.Success)
+                    : x.Success.CompareTo(y.Success);
             }
             return compare;
         }
