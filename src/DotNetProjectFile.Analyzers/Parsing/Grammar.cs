@@ -38,11 +38,11 @@ public partial class Grammar
 
     /// <summary>This grammar may or may not match.</summary>
     [Pure]
-    public Grammar Option => new Repeat(this, 0, 1);
+    public Grammar Option => new Internal.Repeat(this, 0, 1);
 
     /// <summary>This grammar must not match.</summary>
     [Pure]
-    public Grammar Not => new Repeat(this, 0, 0);
+    public Grammar Not => new Internal.Repeat(this, 0, 0);
 
     /// <summary>This grammar may match multiple times.</summary>
     [Pure]
@@ -63,7 +63,7 @@ public partial class Grammar
     /// A new grammar.
     /// </returns>
     [Pure]
-    public Grammar Repeat(int min, int max = int.MaxValue) => new Repeat(this, min, max);
+    public Grammar Repeat(int min, int max = int.MaxValue) => new Internal.Repeat(this, min, max);
 
     /// <summary>The grammar must not match.</summary>
     public static Grammar operator ~(Grammar grammar) => grammar.Not;

@@ -1,6 +1,5 @@
 using DotNetProjectFile.Ini;
 using System.IO;
-using static System.Net.Mime.MediaTypeNames;
 using SyntaxTree = DotNetProjectFile.Syntax.SyntaxTree;
 
 namespace Parsing.INI_syntax;

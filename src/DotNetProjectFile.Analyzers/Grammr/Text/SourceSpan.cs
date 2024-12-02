@@ -31,16 +31,19 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
     private static readonly TextSpan? NoMatch = null;
 
     /// <summary>The underlying source text.</summary>
-    internal readonly SourceText SourceText = sourceText;
+    public readonly SourceText SourceText = sourceText;
 
     /// <summary>The (selected) span.</summary>
     public readonly TextSpan Span = textSpan;
 
     /// <summary>The (selected) source text.</summary>
-    public string Text => SourceText?.ToString(Span) ?? string.Empty;
+    public string Text => SourceText.ToString(Span);
 
     /// <summary>The First char in the span.</summary>
-    public char First => SourceText?[Start] ?? default;
+    public char First => this[0];
+
+    /// <summary>Gets the n^th char of the source text.</summary>
+    public char this[int index] => SourceText[Start + index];
 
     /// <summary>The start position.</summary>
     public int Start => Span.Start;
@@ -51,6 +54,9 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
     /// <summary>Indicates if the span is empty.</summary>
     public bool IsEmpty => Span.IsEmpty;
 
+    /// <summary>Indicates if the span is not empty.</summary>
+    public bool HasValue => !Span.IsEmpty;
+
     /// <summary>Trims the source span.</summary>
     /// <param name="span">
     /// The span to trim to.
@@ -60,6 +66,10 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
     /// </returns>
     public SourceSpan Trim(TextSpan span) => new(SourceText, span);
 
+    /// <summary>Takes the number of specified characters from the start of this source span.</summary>
+    [Pure]
+    public SourceSpan Take(int count) => new(SourceText, new(Start, count));
+
     /// <summary>Trims the source span from the left.</summary>
     /// <param name="left">
     /// The number of characters to trim.
@@ -68,7 +78,7 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
     /// A trimmed source span.
     /// </returns>
     [Pure]
-    public SourceSpan TrimLeft(int left) => new(SourceText, new(Start + left, Length - left));
+    public SourceSpan Skip(int left) => new(SourceText, new(Start + left, Length - left));
 
     /// <summary>Matches until the end of line.</summary>
     /// <returns>
@@ -249,5 +259,5 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
     /// </param>
     public static bool operator !=(SourceSpan left, SourceSpan right) => !(left == right);
 
-    public static SourceSpan operator ++(SourceSpan span) => span.TrimLeft(1);
+    public static SourceSpan operator ++(SourceSpan span) => span.Skip(1);
 }

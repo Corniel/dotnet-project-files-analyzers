@@ -22,23 +22,23 @@ internal static class GlobParser
             else if (span.Matches(c => c == '*') is { } wildcards)
             {
                 group.Add(wildcards.Length == 1 ? Segement.Wildcard : Segement.RecursiveWildcard);
-                span = span.TrimLeft(wildcards.Length);
+                span = span.Skip(wildcards.Length);
             }
             else if (span.Option(out var option) is { } sp)
             {
                 group.Add(option!);
-                span = span.TrimLeft(sp.Length);
+                span = span.Skip(sp.Length);
             }
             else if (span.Sequence() is { } sequence)
             {
                 var text = span.SourceText.ToString(sequence);
                 group.Add(text[0] == '!' ? new NotSequence(text[1..]) : new Sequence(text));
-                span = span.TrimLeft(sequence.Length + 2);
+                span = span.Skip(sequence.Length + 2);
             }
             else if (span.Literal() is { } literal)
             {
                 group.Add(new Literal(span.SourceText.ToString(literal)));
-                span = span.TrimLeft(literal.Length);
+                span = span.Skip(literal.Length);
             }
             else
             {
@@ -58,7 +58,7 @@ internal static class GlobParser
             span++;
 
             if (span.Matches(c => c != ']' && c != '[') is { } match &&
-                span.TrimLeft(match.Length).StartsWith(']') is { })
+                span.Skip(match.Length).StartsWith(']') is { })
             {
                 return match;
             }
@@ -116,13 +116,13 @@ internal static class GlobParser
             if (sp.First == '{' && sp.Option(out var nested) is { } nest)
             {
                 options.Add(nested!);
-                sp = sp.TrimLeft(nest.Length);
+                sp = sp.Skip(nest.Length);
             }
             else if (sp.Matches(c => c != ',' && c != '}') is { } next
                 && TryParse(sp.Trim(next)) is { } sub)
             {
                 options.Add(sub);
-                sp = sp.TrimLeft(next.Length);
+                sp = sp.Skip(next.Length);
             }
             else
             {

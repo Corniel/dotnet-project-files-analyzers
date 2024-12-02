@@ -18,6 +18,9 @@ public readonly struct SourceSpanToken(SourceSpan sourceSpan, string? kind = nul
     /// <summary>The text of the token.</summary>
     public string Text => SourceSpan.Text;
 
+    /// <summary>The length of the token.</summary>
+    public int Length => SourceSpan.Length;
+
     /// <summary>Gets the line position span of the token.</summary>
     public LinePositionSpan LinePositionSpan => SourceSpan.SourceText.Lines.GetLinePositionSpan(new(Span.Start, Span.End - Span.Start));
 

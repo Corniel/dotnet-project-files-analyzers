@@ -71,7 +71,7 @@ public readonly struct Parser
     private Parser New(TextSpan span, string? kind = null)
     {
         var token = new SourceSpanToken(SourceSpan.Trim(span), kind);
-        var trimmed = SourceSpan.TrimLeft(span.Length);
+        var trimmed = SourceSpan.Skip(span.Length);
         return new(trimmed, Tokens.Add(token), Cursor, trimmed.IsEmpty ? Matching.EoF : Matching.Match, Syntax);
     }
 
