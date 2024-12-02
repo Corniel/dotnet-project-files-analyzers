@@ -16,6 +16,8 @@ public abstract class Tokens
 
 #if NETSTANDARD2_0
     internal Tokens this[Range range] => new Repeat(this, range.Start.Value, range.End.Value);
+
+    public Tokens Repeat(int min, int max = int.MaxValue) => new Repeat(this, min, max);
 #else
     public Tokens this[Range range] => new Repeat(this, range.Start.Value, range.End.Value);
 #endif

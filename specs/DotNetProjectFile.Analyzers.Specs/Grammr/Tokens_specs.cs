@@ -10,6 +10,8 @@ public class Tokenizes : Grammar
 
     public static readonly Tokens ABC = A & B & C;
     public static readonly Tokens Letter = A | B | C;
+    public static readonly Tokens As = A.Star;
+    public static readonly Tokens Bs = B.Repeat(2);
 
     [Test]
     public void sequences()
@@ -37,5 +39,57 @@ public class Tokenizes : Grammar
             Success = true,
             Remaining = new { Text = "BCDE" },
         }]);
+    }
+
+    public class Repeates
+    {
+        [Test]
+        public void multiple()
+        {
+            var results = As.Tokenize(Source.Span("AAABCDE"));
+
+            object[] expected = [
+                new
+                {
+                    Tokens = new[]{ new { Text = "A", Kind = "A" }, new { Text = "A", Kind = "A" }, new { Text = "A", Kind = "A" } },
+                    Success = true,
+                    Remaining = new { Text = "BCDE" },
+                },
+                new
+                {
+                    Tokens = new[]{ new { Text = "A", Kind = "A" }, new { Text = "A", Kind = "A" } },
+                    Success = true,
+                    Remaining = new { Text = "ABCDE" },
+                },
+                new
+                {
+                    Tokens = new[]{ new { Text = "A", Kind = "A" } },
+                    Success = true,
+                    Remaining = new { Text = "AABCDE" },
+                },
+                new
+                {
+                    Tokens = Array.Empty<object>(),
+                    Success = true,
+                    Remaining = new { Text = "AAABCDE" },
+                }];
+
+            results.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void not_enough()
+        {
+            var results = Bs.Tokenize(Source.Span("BCDE"));
+
+            results.Should().BeEquivalentTo([
+                new
+                {
+                    Tokens = Array.Empty<object>(),
+                    Success = false,
+                    Remaining = new { Text = "CDE" },
+                    Message = "Expected B."
+                }]);
+        }
     }
 }
