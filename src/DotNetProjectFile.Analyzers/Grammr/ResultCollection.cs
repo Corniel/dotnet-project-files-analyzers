@@ -11,54 +11,35 @@ public readonly struct ResultCollection<TResult> : IReadOnlyCollection<TResult>
 
     private ResultCollection(TResult[] items) => Items = items;
 
+    public bool Success => Items.Length != 0 && Items[0].Success;
+
     [Pure]
     public ResultCollection<TResult> Add(TResult result)
     {
-        if (result.Success || Count == 0 || Items[^1].Success)
+        // If empty always add.
+        if (Count == 0)
         {
-            var next = new TResult[Count + 1];
-            var i = 0;
-
-            while (i < Count)
-            {
-                var existing = Items[i];
-
-                if (First(existing, result))
-                {
-                    next[i] = existing;
-                }
-                else
-                {
-                    break;
-                }
-                i++;
-            }
-
-            next[i] = result;
-            Array.Copy(Items, i, next, i + 1, Count - i);
-
-            return new(next);
+            return new([result]);
         }
-        else
+        var first = Comparer.Compare(result, Items[0]);
+
+        return (first, result.Success, Success) switch
         {
-            var next = new TResult[Count];
-            Array.Copy(Items, next, Count - 1);
+            // Failure is not better.
+            (>= 0, false, _) => this,
 
-            var last = Items[^1];
+            // Best is not successful, and result is better.
+            (< 0, _, false) => new([result, .. Items.Skip(1)]),
 
-            next[^1] = result.Remaining.Length < last.Remaining.Length
-                ? result
-                : last;
-
-            return new(next);
-        }
-
-        static bool First(TResult l, TResult r) => (l.Success, r.Success) switch
-        {
-            (true, false) => true,
-            (false, true) => false,
-            _ => r.Remaining.Length < l.Remaining.Length,
+            // Add result to existing cases.
+            _ => Sort([result, .. Items]),
         };
+    }
+
+    private static ResultCollection<TResult> Sort(TResult[] items)
+    {
+        Array.Sort(items, Comparer);
+        return new(items);
     }
 
     /// <inheritdoc />
@@ -71,4 +52,21 @@ public readonly struct ResultCollection<TResult> : IReadOnlyCollection<TResult>
     /// <inheritdoc />
     [Pure]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    private static readonly Sorter Comparer = new();
+
+    private sealed class Sorter : IComparer<TResult>
+    {
+        public int Compare(TResult x, TResult y)
+        {
+            var compare = x.Remaining.Length.CompareTo(y.Remaining.Length);
+
+            if (compare == 0)
+            {
+                // with the same length, failure first.
+                compare = x.Success.CompareTo(y.Success);
+            }
+            return compare;
+        }
+    }
 }
