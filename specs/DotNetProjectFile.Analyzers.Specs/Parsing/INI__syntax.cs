@@ -86,7 +86,6 @@ public class Tokenizes
         ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 4));
     }
 
-
     [Test]
     public void dot_editorconfig()
     {
@@ -105,8 +104,7 @@ public class Tokenizes
 some_key = value
 invalid line
 indenting = \t
-[]"
-            );
+[]");
 
             var tokens = INI_grammar.file.Tokenize(span);
     }

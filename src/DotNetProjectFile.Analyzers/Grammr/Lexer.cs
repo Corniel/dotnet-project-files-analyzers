@@ -2,7 +2,7 @@ using Grammr.Text;
 
 namespace Grammr;
 
-public static class Tokenizer
+public static class Lexer
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView))]
