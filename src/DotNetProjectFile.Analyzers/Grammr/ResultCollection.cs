@@ -23,6 +23,41 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
     [Pure]
     public ResultCollection<TResult> Add(TResult result)
     {
+        var next = Next(result);
+
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers
+
+        Console.WriteLine();
+
+        Console.WriteLine(result.ToString());
+
+        foreach (var r in next)
+        {
+            if (Items.Contains(r))
+            {
+                Console.Write("[*] ");
+            }
+            else
+            {
+                Console.Write("[+] ");
+            }
+            Console.WriteLine(r);
+        }
+        foreach (var r in this.Where(r => !next.Contains(r)))
+        {
+            Console.Write("[-] ");
+            Console.WriteLine(r);
+        }
+
+
+#pragma warning restore RS1035 // Do not use APIs banned for analyzers
+
+        return next;
+    }
+
+    [Pure]
+    private ResultCollection<TResult> Next(TResult result)
+    {
         if (Count == 0)
         {
             return new([result]);

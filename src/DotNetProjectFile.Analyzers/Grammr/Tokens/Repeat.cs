@@ -30,7 +30,7 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
 
             // Add success to final for * and +.
             // Always add failure.
-            if (!result.Success || MinOccurs <= 1)
+                
             {
                 final = final.Add(result);
             }
