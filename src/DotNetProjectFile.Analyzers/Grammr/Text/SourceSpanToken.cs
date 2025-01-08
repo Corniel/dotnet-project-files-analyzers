@@ -49,4 +49,10 @@ public readonly struct SourceSpanToken(SourceSpan sourceSpan, string? kind = nul
         => Kind is { Length: > 0 }
         ? $"{Span} {Text}, {Kind}"
         : $"{Span} {Text}";
+
+    /// <summary>Returns true if left and right are equal.</summary>
+    public static bool operator ==(SourceSpanToken left, SourceSpanToken right) => left.Equals(right);
+
+    /// <summary>Returns true if left and right are different.</summary>
+    public static bool operator !=(SourceSpanToken left, SourceSpanToken right) => !(left == right);
 }

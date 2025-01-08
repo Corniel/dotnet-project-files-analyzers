@@ -2,10 +2,13 @@ using Grammr.Text;
 
 namespace Grammr;
 
+/// <summary>Represents a single token.</summary>
 public abstract class Token : Tokens
 {
+    /// <summary>Initializes a new instance of the <see cref="Token"/> class.</summary>
     protected Token(string? kind) => Kind = kind ?? GetType().Name;
 
+    /// <summary>The kind of the token.</summary>
     public string Kind { get; }
 
     /// <inheritdoc />
@@ -22,9 +25,6 @@ public abstract class Token : Tokens
     /// </summary>
     /// <param name="source">
     /// The source text to match on.
-    /// </param>
-    /// <param name="done">
-    /// Tokens already processed.
     /// </param>
     [Pure]
     public abstract int Match(SourceSpan source);

@@ -1,6 +1,8 @@
 BOM
 CDATA
 CPM
+eof
+eol
 fallback
 INI
 MOQ
@@ -11,6 +13,7 @@ README
 ruleset
 RESX
 TFM
+tokenize
 unparsable
 usings
 VBC

@@ -2,6 +2,7 @@ using Grammr.Text;
 
 namespace Grammr;
 
+/// <summary>Represents a sequence of tokens.</summary>
 public abstract class Tokens
 {
     /// <summary>Tokenizes the source span.</summary>
@@ -11,7 +12,7 @@ public abstract class Tokens
     /// <summary>Creates a switch of tokens to choose one of.</summary>
     public static Tokens operator |(Tokens l, Tokens r) => new Switch([l, r]);
 
-    /// <summary>Creates a required sequense of tokens.</summary>
+    /// <summary>Creates a required sequence of tokens.</summary>
     public static Tokens operator &(Tokens l, Tokens r) => new Sequence([l, r]);
 
 #if NETSTANDARD2_0

@@ -20,6 +20,7 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
     /// <inheritdoc />
     public TResult this[int index] => Items[index];
 
+    /// <summary>Creates a new instance with the result added.</summary>
     [Pure]
     public ResultCollection<TResult> Add(TResult result)
     {
@@ -49,7 +50,6 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
             Console.WriteLine(r);
         }
 
-
 #pragma warning restore RS1035 // Do not use APIs banned for analyzers
 
         return next;
@@ -68,10 +68,10 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
         return (first, result.Success, Success) switch
         {
             // Failure is not better.
-            ( >= 0, false, _) => this,
+            (>= 0, false, _) => this,
 
             // Best is not successful, and result is better.
-            ( < 0, _, false) => new([result, .. Items.Skip(1)]),
+            (< 0, _, false) => new([result, .. Items.Skip(1)]),
 
             _ when Items.Contains(result) => this,
 
