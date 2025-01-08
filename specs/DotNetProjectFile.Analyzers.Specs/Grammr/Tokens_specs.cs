@@ -82,14 +82,15 @@ public class Tokenizes : Grammar
         {
             var results = Bs.Tokenize(Source.Span("BCDE"));
 
-            results.Should().BeEquivalentTo([
-                new
-                {
-                    Tokens = Array.Empty<object>(),
-                    Success = false,
-                    Remaining = new { Text = "CDE" },
-                    Message = "Expected B."
-                }]);
+            object result = results[0];
+            result.Should().BeEquivalentTo(
+            new
+            {
+                Tokens = Array.Empty<object>(),
+                Success = false,
+                Remaining = new { Text = "CDE" },
+                Message = "Expected B."
+            });
         }
     }
 }
