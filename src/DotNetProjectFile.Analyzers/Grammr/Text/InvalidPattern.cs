@@ -4,18 +4,14 @@ namespace Grammr.Text;
 public class InvalidPattern : FormatException
 {
     /// <summary>Initializes a new instance of the <see cref="InvalidPattern"/> class.</summary>
-    public InvalidPattern()
-    {
-    }
+    public InvalidPattern() { }
 
     /// <summary>Initializes a new instance of the <see cref="InvalidPattern"/> class.</summary>
     /// <param name="message">
     /// error message and a reference to the inner exception that is the cause of this
     /// exception.
     /// </param>
-    public InvalidPattern(string message) : base(message)
-    {
-    }
+    public InvalidPattern(string message) : base(message) { }
 
     /// <summary>Initializes a new instance of the <see cref="InvalidPattern"/> class.</summary>
     /// <param name="message">
