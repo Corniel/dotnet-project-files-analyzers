@@ -25,31 +25,31 @@ public readonly struct ResultCollection : IReadOnlyList<Result>
     {
         var next = Next(result);
 
-#pragma warning disable RS1035 // Do not use APIs banned for analyzers
+//#pragma warning disable RS1035 // Do not use APIs banned for analyzers
 
-        Console.WriteLine();
+//        Console.WriteLine();
 
-        Console.WriteLine(result.ToString());
+//        Console.WriteLine(result.ToString());
 
-        foreach (var r in next)
-        {
-            if (Items.Contains(r))
-            {
-                Console.Write("[*] ");
-            }
-            else
-            {
-                Console.Write("[+] ");
-            }
-            Console.WriteLine(r);
-        }
-        foreach (var r in this.Where(r => !next.Contains(r)))
-        {
-            Console.Write("[-] ");
-            Console.WriteLine(r);
-        }
+//        foreach (var r in next)
+//        {
+//            if (Items.Contains(r))
+//            {
+//                Console.Write("[*] ");
+//            }
+//            else
+//            {
+//                Console.Write("[+] ");
+//            }
+//            Console.WriteLine(r);
+//        }
+//        foreach (var r in this.Where(r => !next.Contains(r)))
+//        {
+//            Console.Write("[-] ");
+//            Console.WriteLine(r);
+//        }
 
-#pragma warning restore RS1035 // Do not use APIs banned for analyzers
+//#pragma warning restore RS1035 // Do not use APIs banned for analyzers
 
         return next;
     }
