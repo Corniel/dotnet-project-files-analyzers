@@ -7,7 +7,7 @@ namespace Grammr;
 public readonly struct Result : IReadOnlyList<SourceSpanToken>, IEquatable<Result>
 {
     private Result(
-        Syntax.Node? node,
+        Syntax.TreeNode? node,
         ImmutableArray<SourceSpanToken> tokens,
         SourceSpan remaining,
         bool success,
@@ -20,7 +20,7 @@ public readonly struct Result : IReadOnlyList<SourceSpanToken>, IEquatable<Resul
         Message = message;
     }
 
-    public Syntax.Node? Node { get; }
+    public Syntax.TreeNode? Node { get; }
 
     public ImmutableArray<SourceSpanToken> Tokens { get; }
 
@@ -88,7 +88,7 @@ public readonly struct Result : IReadOnlyList<SourceSpanToken>, IEquatable<Resul
     private static string Format(string str) => str.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t");
 
     [Pure]
-    public static Result Successful(Syntax.Node? node, SourceSpan remainder, params IEnumerable<SourceSpanToken> tokens)
+    public static Result Successful(Syntax.TreeNode? node, SourceSpan remainder, params IEnumerable<SourceSpanToken> tokens)
         => new(node, [.. tokens], remainder, true, null);
 
     [Pure]

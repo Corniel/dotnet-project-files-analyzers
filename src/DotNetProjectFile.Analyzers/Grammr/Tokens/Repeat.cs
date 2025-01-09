@@ -13,7 +13,7 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
     {
         var final = ResultCollection.Empty;
         var currs = ResultCollection.Empty;
-        var nodes = ImmutableArray<Grammr.Syntax.Node>.Empty;
+        var nodes = ImmutableArray<Grammr.Syntax.TreeNode>.Empty;
 
         var occurs = 0;
 

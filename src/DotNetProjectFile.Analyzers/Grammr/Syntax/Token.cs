@@ -2,20 +2,14 @@ using Grammr.Text;
 
 namespace Grammr.Syntax;
 
-public sealed class Token : Node
+public sealed class Token(SourceSpanToken token) : TreeNode
 {
-    public Token(SourceSpanToken token)
-    {
-        SourceSpan = token.SourceSpan;
-        Tokens = [token];
-    }
+    /// <inheritdoc />
+    public override SourceSpan SourceSpan { get; } = token.SourceSpan;
 
     /// <inheritdoc />
-    public override SourceSpan SourceSpan { get; }
+    public override IReadOnlyList<TreeNode> Children => [];
 
     /// <inheritdoc />
-    public override IReadOnlyCollection<SourceSpanToken> Tokens { get; }
-
-    /// <inheritdoc />
-    public override int Count => 1;
+    public override IReadOnlyCollection<SourceSpanToken> Tokens { get; } = [token];
 }
