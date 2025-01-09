@@ -1,6 +1,6 @@
 namespace DotNetProjectFile.Collections;
 
-/// <summary>Enumerator to iterate all elements in <see cref="AppendOnlyCollection{T}"/>.</summary>
+/// <summary>Enumerator to iterate all elements in <see cref="AppendOnlyList{T}"/>.</summary>
 public struct Enumerator<T> : IEnumerator<T>, IEnumerable<T>
 {
     private readonly T[] Array;

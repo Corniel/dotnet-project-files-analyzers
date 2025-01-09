@@ -4,9 +4,9 @@ namespace DotNetProjectFile.Collections;
 
 [DebuggerTypeProxy(typeof(CollectionDebugView))]
 [DebuggerDisplay("Count = {Count}, Capacity = {Buffer.Length}")]
-public readonly struct AppendOnlyCollection<T> : IReadOnlyCollection<T>
+public readonly struct AppendOnlyList<T> : IReadOnlyList<T>
 {
-    public static readonly AppendOnlyCollection<T> Empty = new(0, []);
+    public static readonly AppendOnlyList<T> Empty = new(0, []);
 
     /// <remarks>Internal from .NET.</remarks>
     private const int MaxCapacity = 0X7FFFFFC7;
@@ -14,8 +14,8 @@ public readonly struct AppendOnlyCollection<T> : IReadOnlyCollection<T>
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly T[] Buffer;
 
-    /// <summary>Initializes a new instance of the <see cref="AppendOnlyCollection{T}"/> struct.</summary>
-    private AppendOnlyCollection(int count, T[] buffer)
+    /// <summary>Initializes a new instance of the <see cref="AppendOnlyList{T}"/> struct.</summary>
+    private AppendOnlyList(int count, T[] buffer)
     {
         Count = count;
         Buffer = buffer;
@@ -24,7 +24,10 @@ public readonly struct AppendOnlyCollection<T> : IReadOnlyCollection<T>
     /// <inheritdoc />
     public int Count { get; }
 
-    /// <summary>Creates a new <see cref="AppendOnlyCollection{T}"/> with the added item(s).</summary>
+    /// <inheritdoc />
+    public T this[int index] => Buffer[index];
+
+    /// <summary>Creates a new <see cref="AppendOnlyList{T}"/> with the added item(s).</summary>
     /// <param name="item">
     /// The item(s) to add.
     /// </param>
@@ -32,7 +35,7 @@ public readonly struct AppendOnlyCollection<T> : IReadOnlyCollection<T>
     /// Null, and null items are ignored.
     /// </remarks>
     [Pure]
-    public AppendOnlyCollection<T> Add(T? item)
+    public AppendOnlyList<T> Add(T? item)
     {
         if (item is null)
         {
@@ -52,7 +55,7 @@ public readonly struct AppendOnlyCollection<T> : IReadOnlyCollection<T>
     /// </remarks>
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public AppendOnlyCollection<T> AddRange(params IEnumerable<T> items)
+    public AppendOnlyList<T> AddRange(params IEnumerable<T> items)
     {
         var append = this;
 
@@ -106,7 +109,7 @@ public readonly struct AppendOnlyCollection<T> : IReadOnlyCollection<T>
     /// </remarks>
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private AppendOnlyCollection<T> AddSingle(T element)
+    private AppendOnlyList<T> AddSingle(T element)
     {
         var append = Ensure();
 
@@ -129,7 +132,7 @@ public readonly struct AppendOnlyCollection<T> : IReadOnlyCollection<T>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private AppendOnlyCollection<T> Append(T element)
+    private AppendOnlyList<T> Append(T element)
     {
         Buffer[Count] = element;
         return new(Count + 1, Buffer);
@@ -137,7 +140,7 @@ public readonly struct AppendOnlyCollection<T> : IReadOnlyCollection<T>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private AppendOnlyCollection<T> Ensure()
+    private AppendOnlyList<T> Ensure()
     {
         if (Count < Buffer.Length && Count != 0)
         {
@@ -153,7 +156,7 @@ public readonly struct AppendOnlyCollection<T> : IReadOnlyCollection<T>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private AppendOnlyCollection<T> Copy(int capacity)
+    private AppendOnlyList<T> Copy(int capacity)
     {
         var copy = new T[capacity];
         Array.Copy(Buffer, copy, Count);
