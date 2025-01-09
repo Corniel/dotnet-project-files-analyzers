@@ -22,7 +22,7 @@ public class Tokenizes : Grammar
         results.Should().BeEquivalentTo([
             new
             {
-                Tokens = new []{ new { Text = "A", Kind = "A" }, new { Text = "B", Kind = "B" }, new { Text = "C", Kind = "C" } },
+                Stream = new []{ new { Text = "A", Kind = "A" }, new { Text = "B", Kind = "B" }, new { Text = "C", Kind = "C" } },
                 Success = true,
                 Remaining = new { Text = "DE" },
             }]);
@@ -36,7 +36,7 @@ public class Tokenizes : Grammar
         results.Should().BeEquivalentTo([
         new
         {
-            Tokens = new []{ new { Text = "A", Kind = "A" } },
+            Stream = new []{ new { Text = "A", Kind = "A" } },
             Success = true,
             Remaining = new { Text = "BCDE" },
         }]);
@@ -52,25 +52,25 @@ public class Tokenizes : Grammar
             object[] expected = [
                 new
                 {
-                    Tokens = new[]{ new { Text = "A", Kind = "A" }, new { Text = "A", Kind = "A" }, new { Text = "A", Kind = "A" } },
+                    Stream = new[]{ new { Text = "A", Kind = "A" }, new { Text = "A", Kind = "A" }, new { Text = "A", Kind = "A" } },
                     Success = true,
                     Remaining = new { Text = "BCDE" },
                 },
                 new
                 {
-                    Tokens = new[]{ new { Text = "A", Kind = "A" }, new { Text = "A", Kind = "A" } },
+                    Stream = new[]{ new { Text = "A", Kind = "A" }, new { Text = "A", Kind = "A" } },
                     Success = true,
                     Remaining = new { Text = "ABCDE" },
                 },
                 new
                 {
-                    Tokens = new[]{ new { Text = "A", Kind = "A" } },
+                    Stream = new[]{ new { Text = "A", Kind = "A" } },
                     Success = true,
                     Remaining = new { Text = "AABCDE" },
                 },
                 new
                 {
-                    Tokens = Array.Empty<object>(),
+                    Stream = Array.Empty<object>(),
                     Success = true,
                     Remaining = new { Text = "AAABCDE" },
                 }];
@@ -87,7 +87,7 @@ public class Tokenizes : Grammar
             result.Should().BeEquivalentTo(
             new
             {
-                Tokens = Array.Empty<object>(),
+                Stream = new[] { new { Text = "B", Kind = "B" } },
                 Success = false,
                 Remaining = new { Text = "CDE" },
                 Message = "Expected B."

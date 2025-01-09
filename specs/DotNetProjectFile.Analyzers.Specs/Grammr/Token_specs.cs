@@ -19,7 +19,7 @@ public class Tokenizes : Grammar
         results.Should().BeEquivalentTo([
             new
             {
-                Tokens = new []{ new { Text = "C", Kind = "C" } },
+                Stream = new []{ new { Text = "C", Kind = "C" } },
                 Success = true,
                 Remaining = new { Text = "DE" },
             }]);
@@ -33,7 +33,7 @@ public class Tokenizes : Grammar
         results.Should().BeEquivalentTo([
             new
             {
-                Tokens = new []{ new { Text = "ABC", Kind = "ABC" } },
+                Stream = new []{ new { Text = "ABC", Kind = "ABC" } },
                 Success = true,
                 Remaining = new { Text = "DEF" },
             }]);
@@ -47,7 +47,7 @@ public class Tokenizes : Grammar
         results.Should().BeEquivalentTo([
             new
             {
-                Tokens = new []{ new { Text = " \t\r\n", Kind = "WhiteSpace" } },
+                Stream = new []{ new { Text = " \t\r\n", Kind = "WhiteSpace" } },
                 Success = true,
                 Remaining = new { Text = "ABC" },
             }]);
@@ -61,7 +61,7 @@ public class Tokenizes : Grammar
         results.Should().BeEquivalentTo([
             new
             {
-                Tokens = new []{ new { Text = "42", Kind = "Digits" } },
+                Stream = new []{ new { Text = "42", Kind = "Digits" } },
                 Success = true,
                 Remaining = new { Text = "d" },
             }]);
@@ -76,7 +76,7 @@ public class Tokenizes : Grammar
         results.Should().BeEquivalentTo([
             new
             {
-                Tokens = new []{ new { Text = start, Kind = "EndOfLine" } },
+                Stream = new []{ new { Text = start, Kind = "EndOfLine" } },
                 Success = true,
                 Remaining = new { Text = "Hello" },
             }]);
@@ -98,7 +98,7 @@ public class Does_not_match : Grammar
         results.Should().BeEquivalentTo([
             new
             {
-                Tokens = Array.Empty<object>(),
+                Stream = Array.Empty<object>(),
                 Success = false,
                 Remaining = new { Text = "ABCDE" },
                 Message = "Expected C.",
@@ -113,7 +113,7 @@ public class Does_not_match : Grammar
         results.Should().BeEquivalentTo([
             new
             {
-                Tokens = Array.Empty<object>(),
+                Stream = Array.Empty<object>(),
                 Success = false,
                 Remaining = new { Text = "BCDEF" },
                 Message = "Expected ABC.",
@@ -128,7 +128,7 @@ public class Does_not_match : Grammar
         results.Should().BeEquivalentTo([
             new
             {
-                Tokens = Array.Empty<object>(),
+                Stream = Array.Empty<object>(),
                 Success = false,
                 Remaining = new { Text = "ABC\nCDE" },
                 Message = "Expected WhiteSpace.",
@@ -144,7 +144,7 @@ public class Does_not_match : Grammar
             new
             {
 
-                Tokens = Array.Empty<object>(),
+                Stream = Array.Empty<object>(),
                 Success = false,
                 Remaining = new { Text = "Test42d" },
                 Message = "Expected Digits.",
