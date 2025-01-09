@@ -1,9 +1,7 @@
 using Grammr.Text;
-using System.IO;
 
 namespace Grammr;
 
-[DebuggerTypeProxy(typeof(CollectionDebugView))]
 public readonly struct Result : IEquatable<Result>
 {
     private Result(
