@@ -53,7 +53,7 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
                             nodes = nodes.Add(node);
                         }
 
-                        var merged = curr.Merge(result);
+                        var merged = Result.Successful(nodes.Length == 1 ? nodes[0] : new Grammr.Syntax.Node(nodes), result.Remaining);
                         nexts = nexts.Add(merged);
 
                         if (occurs > MinOccurs)

@@ -14,11 +14,16 @@ internal sealed class Sequence(ImmutableArray<Tokens> sequances) : Tokens
     {
         var final = ResultCollection.Empty;
         var currs = ResultCollection.Empty;
+        var nodes = ImmutableArray<Syntax.TreeNode>.Empty;
 
         foreach (var result in Sequances[0].Tokenize(source))
         {
             if (result.Success)
             {
+                if (result.Node is { } node)
+                {
+                    nodes = nodes.Add(node);
+                }
                 currs = currs.Add(result);
             }
             else
@@ -35,14 +40,18 @@ internal sealed class Sequence(ImmutableArray<Tokens> sequances) : Tokens
             {
                 foreach (var result in sequance.Tokenize(curr.Remaining))
                 {
-                    var merged = curr.Merge(result);
-                    if (merged.Success)
+                    if (result.Success)
                     {
+                        if (result.Node is { } node)
+                        {
+                            nodes = nodes.Add(node);
+                        }
+                        var merged = Result.Successful(nodes.Length == 1 ? nodes[0] : new Syntax.Node(nodes), result.Remaining);
                         nexts = nexts.Add(merged);
                     }
                     else
                     {
-                        final = final.Add(merged);
+                        final = final.Add(result);
                     }
                 }
             }

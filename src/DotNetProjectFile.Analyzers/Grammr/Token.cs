@@ -20,7 +20,7 @@ public abstract class Token : Tokens
         {
             var token = new SourceSpanToken(source.Take(len), Kind);
             var node = new Syntax.Token(token);
-            return ResultCollection.Empty.Add(Result.Successful(node, source.Skip(len), token));
+            return ResultCollection.Empty.Add(Result.Successful(node, source.Skip(len)));
         }
         else
         {
