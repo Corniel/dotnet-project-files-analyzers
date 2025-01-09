@@ -19,7 +19,7 @@ public class Adds : Scenarios
     [TestCase(false)]
     public void best_as_first(bool success)
     {
-        var initial = Empty.Add(Result.Successful(Left2));
+        var initial = Empty.Add(Successful(Left2));
         var updated = initial.Add(GetResult(Left1, success));
 
         updated.Should().BeEquivalentTo(
@@ -48,10 +48,10 @@ public class Adds : Scenarios
     public void orders_by_reaminder_length(params int[] remainders)
     {
         var initial = Empty
-            .Add(Result.Successful(Source.Span(new string('*', remainders[0]))))
-            .Add(Result.Successful(Source.Span(new string('*', remainders[1]))));
+            .Add(Result.Successful(null, Source.Span(new string('*', remainders[0]))))
+            .Add(Result.Successful(null, Source.Span(new string('*', remainders[1]))));
 
-        var updated = initial.Add(Result.Successful(Source.Span(new string('*', remainders[2]))));
+        var updated = initial.Add(Successful(Source.Span(new string('*', remainders[2]))));
 
         updated.Should().BeEquivalentTo(
         [
@@ -100,7 +100,7 @@ public class Does_not_add : Scenarios
         var span = Source.Span(text);
 
         var initial = Empty.Add(GetResult(Left1, success));
-        var updated = initial.Add(Result.Successful(span));
+        var updated = initial.Add(Successful(span));
 
         object best = updated[0];
 
@@ -129,9 +129,11 @@ public class Scenarios
     internal static readonly SourceSpan Left2 = Source.Span("22");
     internal static readonly SourceSpan Left3 = Source.Span("333");
 
+    internal static Result Successful(SourceSpan span) => Result.Successful(null, span);
+
     internal static Result GetResult(SourceSpan span, bool success)
         => success
-        ? Result.Successful(span)
+        ? Result.Successful(null, span)
         : Result.NoMatch(span, "Failure");
 }
 

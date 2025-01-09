@@ -13,11 +13,20 @@ public abstract class Token : Tokens
 
     /// <inheritdoc />
     [Pure]
-    public sealed override ResultCollection Tokenize(SourceSpan source) => Match(source) switch
+    public sealed override ResultCollection Tokenize(SourceSpan source)
     {
-        var len when len > 0 => ResultCollection.Empty.Add(Result.Successful(source.Skip(len), new SourceSpanToken(source.Take(len), Kind))),
-        _ => ResultCollection.Empty.Add(Result.NoMatch(source, $"Expected {Kind}.")),
-    };
+        var len = Match(source);
+        if (len > 0)
+        {
+            var token = new SourceSpanToken(source.Take(len), Kind);
+            var node = new Syntax.Token(token);
+            return ResultCollection.Empty.Add(Result.Successful(node, source.Skip(len), token));
+        }
+        else
+        {
+            return ResultCollection.Empty.Add(Result.NoMatch(source, $"Expected {Kind}."));
+        }
+    }
 
     /// <summary>
     /// Returns the length of the matched token, and zero the source does not

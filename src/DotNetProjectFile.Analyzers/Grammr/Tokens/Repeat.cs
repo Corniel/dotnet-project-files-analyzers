@@ -13,27 +13,29 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
     {
         var final = ResultCollection.Empty;
         var currs = ResultCollection.Empty;
+        var nodes = ImmutableArray<Grammr.Syntax.Node>.Empty;
 
         var occurs = 0;
 
         if (MinOccurs == 0)
         {
-            final = final.Add(Result.Successful(source));
+            final = final.Add(Result.Successful(null, source));
         }
 
         foreach (var result in Tokens.Tokenize(source))
         {
             if (result.Success)
             {
+                if (result.Node is { } node)
+                {
+                    nodes = nodes.Add(node);
+                }
                 currs = currs.Add(result);
             }
 
             // Add success to final for * and +.
             // Always add failure.
-                
-            {
-                final = final.Add(result);
-            }
+            final = final.Add(result);
         }
 
         while (++occurs <= MaxOccurs && currs.Any())
@@ -46,8 +48,14 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
                 {
                     if (result.Success)
                     {
+                        if (result.Node is { } node)
+                        {
+                            nodes = nodes.Add(node);
+                        }
+
                         var merged = curr.Merge(result);
                         nexts = nexts.Add(merged);
+
                         if (occurs > MinOccurs)
                         {
                             final = final.Add(merged);

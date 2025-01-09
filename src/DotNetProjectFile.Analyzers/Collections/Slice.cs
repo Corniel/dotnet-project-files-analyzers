@@ -17,11 +17,11 @@ public readonly struct Slice<T>(int start, int size, IReadOnlyList<T> list) : IR
 
     /// <inheritdoc cref="Enumerable.Skip{TSource}(IEnumerable{TSource}, int) "/>
     [Pure]
-    public Slice<T> Skip(int count) => new(Offset + count, Count - count, list);
+    public Slice<T> Skip(int count) => new(Offset + count, Count - count, List);
 
     /// <inheritdoc cref="Enumerable.Take{TSource}(IEnumerable{TSource}, int) "/>
     [Pure]
-    public Slice<T> Take(int count) => new(Offset, count, list);
+    public Slice<T> Take(int count) => new(Offset, count, List);
 
     /// <inheritdoc />
     [Pure]

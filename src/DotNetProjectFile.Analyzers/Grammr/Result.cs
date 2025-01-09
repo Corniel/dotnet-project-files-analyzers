@@ -7,16 +7,20 @@ namespace Grammr;
 public readonly struct Result : IReadOnlyList<SourceSpanToken>, IEquatable<Result>
 {
     private Result(
+        Syntax.Node? node,
         ImmutableArray<SourceSpanToken> tokens,
         SourceSpan remaining,
         bool success,
         string? message)
     {
+        Node = node;
         Tokens = tokens;
         Remaining = remaining;
         Success = success;
         Message = message;
     }
+
+    public Syntax.Node? Node { get; }
 
     public ImmutableArray<SourceSpanToken> Tokens { get; }
 
@@ -44,7 +48,7 @@ public readonly struct Result : IReadOnlyList<SourceSpanToken>, IEquatable<Resul
     public bool Equals(Result other)
         => Success == other.Success
         && Remaining.Length == other.Remaining.Length
-        && Enumerable.SequenceEqual(Tokens, other.Tokens);
+        && Tokens.Length == other.Tokens.Length;
 
     /// <inheritdoc />
     [Pure]
@@ -84,16 +88,16 @@ public readonly struct Result : IReadOnlyList<SourceSpanToken>, IEquatable<Resul
     private static string Format(string str) => str.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t");
 
     [Pure]
-    public static Result Successful(SourceSpan remainder, params IEnumerable<SourceSpanToken> tokens)
-        => new([.. tokens], remainder, true, null);
+    public static Result Successful(Syntax.Node? node, SourceSpan remainder, params IEnumerable<SourceSpanToken> tokens)
+        => new(node, [.. tokens], remainder, true, null);
 
     [Pure]
     public static Result NoMatch(SourceSpan remainder, string message)
-        => new([], remainder, false, message);
+        => new(null, [], remainder, false, message);
 
     public Result Merge(Result other) => (Success, other.Success) switch
     {
-        (true, true) => Successful(other.Remaining, [.. Tokens, .. other.Tokens]),
+        (true, true) => Successful(other.Node, other.Remaining, [.. Tokens, .. other.Tokens]),
         (true, false) => other,
         _ => throw new InvalidOperationException("Can not merge on unsuccessful results."),
     };
