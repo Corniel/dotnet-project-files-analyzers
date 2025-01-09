@@ -1,4 +1,5 @@
 using Grammr.Text;
+using System.IO;
 
 namespace Grammr;
 
@@ -7,22 +8,22 @@ public readonly struct Result : IEquatable<Result>
 {
     private Result(
         Syntax.TreeNode? node,
-        SourceSpan remaining,
+        TokenStream stream,
         bool success,
         string? message)
     {
         Node = node;
-        Remaining = remaining;
+        Stream = stream;
         Success = success;
         Message = message;
     }
 
     public Syntax.TreeNode? Node { get; }
 
-    public IReadOnlyCollection<SourceSpanToken> Tokens => Node?.Tokens ?? [];
+    public TokenStream Stream { get; }
 
     /// <summary>The remaining source span to parse.</summary>
-    public SourceSpan Remaining { get; }
+    public SourceSpan Remaining => Stream.Remaining;
 
     /// <summary>Indicates if the parsing was successful.</summary>
     public bool Success { get; }
@@ -47,23 +48,15 @@ public readonly struct Result : IEquatable<Result>
     {
         var hash = Success.GetHashCode();
         hash ^= (Message ?? string.Empty).GetHashCode();
-        hash ^= hash * 17 + Remaining.Length;
-
-        foreach (var token in Tokens)
-        {
-            hash *= 17;
-            hash ^= token.GetHashCode();
-        }
+        hash ^= Stream.GetHashCode();
         return hash;
     }
 
-    private static string Format(string str) => str.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t");
+    [Pure]
+    public static Result Successful(Syntax.TreeNode? node, TokenStream stream)
+        => new(node, stream, true, null);
 
     [Pure]
-    public static Result Successful(Syntax.TreeNode? node, SourceSpan remainder)
-        => new(node, remainder, true, null);
-
-    [Pure]
-    public static Result NoMatch(SourceSpan remainder, string message)
-        => new(null, remainder, false, message);
+    public static Result NoMatch(TokenStream stream, string message)
+        => new(null, stream, false, message);
 }

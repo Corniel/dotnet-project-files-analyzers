@@ -1,7 +1,6 @@
 using DotNetProjectFile.Ini;
 using Grammr.Text;
 using Microsoft.CodeAnalysis.Text;
-using SyntaxTree = DotNetProjectFile.Syntax.SyntaxTree;
 
 namespace Benchmarks;
 
@@ -9,7 +8,7 @@ public class IniFile
 {
     private static readonly string root = string.Join("/", Enumerable.Repeat("..", 7)) + "/Files/";
 
-    private readonly List<SourceSpan> Spans = [];
+    private readonly List<SourceText> Spans = [];
     
     public IniFile()
     {
@@ -18,7 +17,7 @@ public class IniFile
         {
             using var stream = new FileStream(root + file, FileMode.Open, FileAccess.Read);
             var span = SourceText.From(stream);
-            Spans.Add(new(span));
+            Spans.Add(span);
         }
     }
 
@@ -26,5 +25,5 @@ public class IniFile
     public int Index { get; set; }
 
     [Benchmark]
-    public Grammr.Syntax.TreeNode? Parse() => IniGrammar.file.Tokenize(Spans[Index])[0].Node;
+    public Grammr.Syntax.TreeNode? Parse() => IniGrammar.file.Tokenize(TokenStream.New(Spans[Index]))[0].Node;
 }

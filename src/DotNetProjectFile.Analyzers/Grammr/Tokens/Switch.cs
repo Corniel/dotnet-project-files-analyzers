@@ -10,13 +10,13 @@ internal sealed class Switch(ImmutableArray<Tokens> options) : Tokens
 
     /// <inheritdoc />
     [Pure]
-    public override ResultCollection Tokenize(SourceSpan source)
+    public override ResultCollection Tokenize(TokenStream stream)
     {
         var results = ResultCollection.Empty;
 
         foreach (var option in Options)
         {
-            foreach (var result in option.Tokenize(source))
+            foreach (var result in option.Tokenize(stream))
             {
                 results = results.Add(result);
             }

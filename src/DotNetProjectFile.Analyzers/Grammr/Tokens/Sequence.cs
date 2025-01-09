@@ -1,3 +1,4 @@
+using DotNetProjectFile.Collections;
 using Grammr.Text;
 
 namespace Grammr;
@@ -10,13 +11,13 @@ internal sealed class Sequence(ImmutableArray<Tokens> sequances) : Tokens
 
     /// <inheritdoc />
     [Pure]
-    public override ResultCollection Tokenize(SourceSpan source)
+    public override ResultCollection Tokenize(TokenStream stream)
     {
         var final = ResultCollection.Empty;
         var currs = ResultCollection.Empty;
-        var nodes = ImmutableArray<Syntax.TreeNode>.Empty;
+        var nodes = AppendOnlyList<Grammr.Syntax.TreeNode>.Empty;
 
-        foreach (var result in Sequances[0].Tokenize(source))
+        foreach (var result in Sequances[0].Tokenize(stream))
         {
             if (result.Success)
             {
@@ -38,7 +39,7 @@ internal sealed class Sequence(ImmutableArray<Tokens> sequances) : Tokens
 
             foreach (var curr in currs)
             {
-                foreach (var result in sequance.Tokenize(curr.Remaining))
+                foreach (var result in sequance.Tokenize(curr.Stream))
                 {
                     if (result.Success)
                     {
@@ -46,7 +47,7 @@ internal sealed class Sequence(ImmutableArray<Tokens> sequances) : Tokens
                         {
                             nodes = nodes.Add(node);
                         }
-                        var merged = Result.Successful(nodes.Length == 1 ? nodes[0] : new Syntax.Node(nodes), result.Remaining);
+                        var merged = Result.Successful(nodes.Count == 1 ? nodes[0] : new Syntax.Node(nodes), result.Stream);
                         nexts = nexts.Add(merged);
                     }
                     else

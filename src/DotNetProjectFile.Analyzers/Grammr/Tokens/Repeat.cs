@@ -1,3 +1,4 @@
+using DotNetProjectFile.Collections;
 using Grammr;
 using Grammr.Text;
 
@@ -9,27 +10,25 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
 
     /// <inheritdoc />
     [Pure]
-    public override ResultCollection Tokenize(SourceSpan source)
+    public override ResultCollection Tokenize(TokenStream stream)
     {
         var final = ResultCollection.Empty;
         var currs = ResultCollection.Empty;
-        var nodes = ImmutableArray<Grammr.Syntax.TreeNode>.Empty;
+        var nodes = AppendOnlyList<Grammr.Syntax.TreeNode>.Empty;
+        var update = stream;
 
         var occurs = 0;
 
         if (MinOccurs == 0)
         {
-            final = final.Add(Result.Successful(null, source));
+            final = final.Add(Result.Successful(null, update));
         }
 
-        foreach (var result in Tokens.Tokenize(source))
+        foreach (var result in Tokens.Tokenize(update))
         {
             if (result.Success)
             {
-                if (result.Node is { } node)
-                {
-                    nodes = nodes.Add(node);
-                }
+                nodes = nodes.Add(result.Node);
                 currs = currs.Add(result);
             }
 
@@ -44,7 +43,7 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
 
             foreach (var curr in currs)
             {
-                foreach (var result in Tokens.Tokenize(curr.Remaining))
+                foreach (var result in Tokens.Tokenize(curr.Stream))
                 {
                     if (result.Success)
                     {
@@ -53,7 +52,7 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
                             nodes = nodes.Add(node);
                         }
 
-                        var merged = Result.Successful(nodes.Length == 1 ? nodes[0] : new Grammr.Syntax.Node(nodes), result.Remaining);
+                        var merged = Result.Successful(nodes.Count == 1 ? nodes[0] : new Grammr.Syntax.Node(nodes), result.Stream);
                         nexts = nexts.Add(merged);
 
                         if (occurs > MinOccurs)

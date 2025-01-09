@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace Grammr.Text;
 
 /// <summary>Represents an append-only token stream.</summary>
-[DebuggerTypeProxy(typeof(CollectionDebugView)]
+[DebuggerTypeProxy(typeof(CollectionDebugView))]
 [DebuggerDisplay("Count = {Count}, Remaining = {Remaining}")]
 public readonly struct TokenStream : IReadOnlyList<SourceSpanToken>, IEquatable<TokenStream>
 {
@@ -12,7 +12,7 @@ public readonly struct TokenStream : IReadOnlyList<SourceSpanToken>, IEquatable<
     private readonly SourceText SourceText;
 
     [Pure]
-    public static TokenStream New(SourceText sourceText) => new([], sourceText);
+    public static TokenStream New(SourceText sourceText) => new(AppendOnlyList<Info>.Empty, sourceText);
 
     private TokenStream(AppendOnlyList<Info> items, SourceText sourceText)
     {
@@ -30,21 +30,28 @@ public readonly struct TokenStream : IReadOnlyList<SourceSpanToken>, IEquatable<
         }
     }
 
-    public TextSpan Remaining
-    {
-        get
-        {
-            var end = Items[^1].TextSpan.End;
-            return new(end, SourceText.Length - end);
-        }
-    }
-
     /// <inheritdoc />
     public int Count => Items.Count;
 
+    public SourceSpan Remaining
+    {
+        get
+        {
+            if (Count == 0) return new SourceSpan(SourceText);
+
+            var end = Items[^1].TextSpan.End;
+            return new SourceSpan(SourceText, new(end, SourceText.Length - end));
+        }
+    }
+
+    /// <summary>Gets the text of the underlying source text.</summary>
+    public string Text => SourceText.ToString();
+
     /// <summary>Adds a new token to the stream.</summary>
     public TokenStream Add(int length, string? kind)
-        => new(Items.Add(new Info(new(Items[^1].TextSpan.End, length), kind)), SourceText);
+        => Count == 0
+        ? new(Items.Add(new Info(new(0, length), kind)), SourceText)
+        : new(Items.Add(new Info(new(Items[^1].TextSpan.End, length), kind)), SourceText);
 
     /// <inheritdoc />
     [Pure]

@@ -1,3 +1,4 @@
+using Grammr.Text;
 using Specs.TestTools;
 
 namespace Grammr.Token_specs;
@@ -13,7 +14,7 @@ public class Tokenizes : Grammar
     [Test]
     public void chars()
     {
-        var results = C.Tokenize(Source.Span("CDE"));
+        var results = C.Tokenize(TokenStream.New(Source.Text("CDE")));
 
         results.Should().BeEquivalentTo([
             new
@@ -27,7 +28,7 @@ public class Tokenizes : Grammar
     [Test]
     public void strings()
     {
-        var results = ABC.Tokenize(Source.Span("ABCDEF"));
+        var results = ABC.Tokenize(TokenStream.New(Source.Text("ABCDEF")));
 
         results.Should().BeEquivalentTo([
             new
@@ -41,7 +42,7 @@ public class Tokenizes : Grammar
     [Test]
     public void predications()
     {
-        var results = WhiteSpace.Tokenize(Source.Span(" \t\r\nABC"));
+        var results = WhiteSpace.Tokenize(TokenStream.New(Source.Text(" \t\r\nABC")));
 
         results.Should().BeEquivalentTo([
             new
@@ -55,7 +56,7 @@ public class Tokenizes : Grammar
     [Test]
     public void regexes()
     {
-        var results = Digits.Tokenize(Source.Span("42d"));
+        var results = Digits.Tokenize(TokenStream.New(Source.Text("42d")));
 
         results.Should().BeEquivalentTo([
             new
@@ -70,7 +71,7 @@ public class Tokenizes : Grammar
     [TestCase("\r\n")]
     public void end_of_lines(string start)
     {
-        var results = EndOfLine.Tokenize(Source.Span($"{start}Hello"));
+        var results = EndOfLine.Tokenize(TokenStream.New(Source.Text($"{start}Hello")));
 
         results.Should().BeEquivalentTo([
             new
@@ -92,7 +93,7 @@ public class Does_not_match : Grammar
     [Test]
     public void chars()
     {
-        var results = C.Tokenize(Source.Span("ABCDE"));
+        var results = C.Tokenize(TokenStream.New(Source.Text("ABCDE")));
 
         results.Should().BeEquivalentTo([
             new
@@ -107,7 +108,7 @@ public class Does_not_match : Grammar
     [Test]
     public void strings()
     {
-        var results = ABC.Tokenize(Source.Span("BCDEF"));
+        var results = ABC.Tokenize(TokenStream.New(Source.Text("BCDEF")));
 
         results.Should().BeEquivalentTo([
             new
@@ -122,7 +123,7 @@ public class Does_not_match : Grammar
     [Test]
     public void predications()
     {
-        var results = WhiteSpace.Tokenize(Source.Span("ABC\nCDE"));
+        var results = WhiteSpace.Tokenize(TokenStream.New(Source.Text("ABC\nCDE")));
 
         results.Should().BeEquivalentTo([
             new
@@ -137,7 +138,7 @@ public class Does_not_match : Grammar
     [Test]
     public void regexes()
     {
-        var results = Digits.Tokenize(Source.Span("Test42d"));
+        var results = Digits.Tokenize(TokenStream.New(Source.Text("Test42d")));
 
         results.Should().BeEquivalentTo([
             new

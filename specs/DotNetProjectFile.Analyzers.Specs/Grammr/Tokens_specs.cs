@@ -1,3 +1,4 @@
+using Grammr.Text;
 using Specs.TestTools;
 
 namespace Grammr.Tokens_specs;
@@ -16,7 +17,7 @@ public class Tokenizes : Grammar
     [Test]
     public void sequences()
     {
-        var results = ABC.Tokenize(Source.Span("ABCDE"));
+        var results = ABC.Tokenize(TokenStream.New(Source.Text("ABCDE")));
 
         results.Should().BeEquivalentTo([
             new
@@ -30,7 +31,7 @@ public class Tokenizes : Grammar
     [Test]
     public void switches()
     {
-        var results = Letter.Tokenize(Source.Span("ABCDE"));
+        var results = Letter.Tokenize(TokenStream.New(Source.Text("ABCDE")));
 
         results.Should().BeEquivalentTo([
         new
@@ -46,7 +47,7 @@ public class Tokenizes : Grammar
         [Test]
         public void multiple()
         {
-            var results = As.Tokenize(Source.Span("AAABCDE"));
+            var results = As.Tokenize(TokenStream.New(Source.Text("AAABCDE")));
 
             object[] expected = [
                 new
@@ -80,7 +81,7 @@ public class Tokenizes : Grammar
         [Test]
         public void not_enough()
         {
-            var results = Bs.Tokenize(Source.Span("BCDE"));
+            var results = Bs.Tokenize(TokenStream.New(Source.Text("BCDE")));
 
             object result = results[0];
             result.Should().BeEquivalentTo(
