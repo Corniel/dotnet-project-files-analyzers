@@ -95,7 +95,10 @@ public class Tokenizes
 
         var tokens = IniGrammar.file.Tokenize(span);
 
-        var array = tokens.ToArray();
+        var best = tokens[0];
+
+        var result = string.Concat(best.Tokens.Select(t => t.Text));
+        result.Should().Be(span.Text);
     }
 
     [Test]
