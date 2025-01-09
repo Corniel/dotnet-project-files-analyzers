@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Grammr.Syntax;
 
+[DebuggerDisplay("{TextSpan}")]
+[DebuggerTypeProxy(typeof(CollectionDebugView))]
 public sealed class Node(IReadOnlyList<TreeNode> children) : TreeNode
 {
     /// <inheritdoc />

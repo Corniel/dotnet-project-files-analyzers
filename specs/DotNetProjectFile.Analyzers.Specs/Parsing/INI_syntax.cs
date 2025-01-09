@@ -1,200 +1,119 @@
 using DotNetProjectFile.Ini;
+using Specs.TestTools;
 using System.IO;
-using SyntaxTree = DotNetProjectFile.Syntax.SyntaxTree;
 
 namespace Parsing.INI_syntax;
 
-public class Parses
+[Explicit]
+public class Tokenizes
 {
     [Test]
-    public void header_with_space()
+    public void header()
     {
-        var syntax = Parse.Syntax("[My Header]");
+        var span = Source.Span("[My Header] \r\n");
 
-        syntax.Sections.Should().HaveCount(1);
-        syntax.Sections[0].Header.Should().BeEquivalentTo(new { Text = "My Header" });
+        var tokens = IniGrammar.file.Tokenize(span);
+
+        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 5));
     }
 
     [Test]
-    public void header_with_one_kvp()
+    public void header_with_comment()
     {
-        var syntax = Parse.Syntax(@"
-[MyHeader]
-mykey = 3.14");
+        var span = Source.Span("[My Header] # comment here.\r\n");
 
-        syntax.Sections.Should().HaveCount(1);
-        syntax.Sections[0].Header.Should().BeEquivalentTo(new { Text = "MyHeader" });
-        syntax.Sections[0].Kvps.Should().BeEquivalentTo([new { Key = "mykey", Value = "3.14" }]);
+        var tokens = IniGrammar.file.Tokenize(span);
+
+        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 6));
+    }
+
+    [Test]
+    public void comment_only()
+    {
+        var span = Source.Span("# comment here.\t");
+
+        var tokens = IniGrammar.file.Tokenize(span);
+
+        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 2));
+    }
+
+    [Test]
+    public void key_value_pair_with_colon()
+    {
+        var span = Source.Span("    some.key:\t space");
+
+        var tokens = IniGrammar.file.Tokenize(span);
+
+        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 6));
+    }
+
+    [Test]
+    public void key_value_pair_with_equal()
+    {
+        var span = Source.Span("    some.key =\t space\n");
+
+        var tokens = IniGrammar.file.Tokenize(span);
+
+        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 7));
+    }
+
+    [Test]
+    public void value_with_special_chars()
+    {
+        var span = Source.Span("vsspell_ignored_words_main = File:dictionary.dic");
+
+        var tokens = IniGrammar.file.Tokenize(span);
+
+        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 6));
+    }
+
+    [Test]
+    public void key_value_pair_with_comment()
+    {
+        var span = Source.Span(@"dotnet_diagnostic.IDE1006.severity = none # IDE1006: Naming Styles");
+
+        var tokens = IniGrammar.file.Tokenize(span);
+
+        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 8));
+    }
+
+    [Test]
+    public void white_space_only()
+    {
+        var span = Source.Span("    \r\n\t\t\n");
+
+        var tokens = IniGrammar.file.Tokenize(span);
+
+        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 4));
     }
 
     [Test]
     public void dot_editorconfig()
     {
-        using var file = new FileStream("../../../../../.editorconfig", FileMode.Open, FileAccess.Read);
-        var tree = SyntaxTree.Load(file);
-        var syntax = IniFileSyntax.Parse(tree);
+        using var file = new FileInfo("../../../../../.editorconfig").OpenText();
+        var span = Source.Span(file.ReadToEnd());
 
-        syntax.Should().BeOfType<IniFileSyntax>();
+        var tokens = IniGrammar.file.Tokenize(span);
 
-        syntax.Tokens.Should().NotContain(t => t.Kind == TokenKind.UnparsableToken);
+        var array = tokens.ToArray();
     }
 
     [Test]
     public void with_garbage()
     {
-        var syntax = Parse.Syntax(@"global = false
+        var span = Source.Span(@"global = false
 some_key = value
 invalid line
 indenting = \t
-[]"
-        );
+[]");
 
-        var kvps = syntax.Sections[0].Kvps.ToArray();
-
-        kvps.Should().BeEquivalentTo(new Dictionary<string, string>()
-        {
-            ["global"] = "false",
-            ["some_key"] = "value",
-            ["indenting"] = "\\t",
-        });
+            var tokens = IniGrammar.file.Tokenize(span);
     }
-}
 
-
-public class Parses_with_errors
-{
-    public class Header
+    private static object Result(bool success, int remaining, int tokens) => new
     {
-        [Test]
-        public void no_text()
-        {
-            var syntax = Parse.Syntax("[]");
-
-            syntax.Sections[0].Header!.GetDiagnostics().Should().HaveIssue(
-                Issue.ERR("Proj4001", "] is unexpected.").WithSpan(0, 1, 0, 2));
-        }
-
-        [Test]
-        public void multi_open()
-        {
-            var syntax = Parse.Syntax("[[header]");
-
-            syntax.Sections[0].Header!.GetDiagnostics().Should().HaveIssue(
-                Issue.ERR("Proj4001", "[ is unexpected.").WithSpan(0, 1, 0, 2));
-        }
-
-        [Test]
-        public void no_closing()
-        {
-            var syntax = Parse.Syntax("[header\n");
-
-            syntax.Sections[0].Header!.GetDiagnostics().Should().HaveIssue(
-                Issue.ERR("Proj4001", "] is expected.").WithSpan(0, 7, 1, 0));
-        }
-
-        [Test]
-        public void multi_closing()
-        {
-            var syntax = Parse.Syntax("[header]]");
-
-            syntax.Sections[0].Header!.GetDiagnostics().Should().HaveIssue(
-                Issue.ERR("Proj4001", "] is unexpected.").WithSpan(0, 8, 0, 9));
-        }
-    }
-
-    public class Key_value_pair
-    {
-        [Test]
-        public void no_key()
-        {
-            var syntax = Parse.Syntax("= value \n");
-
-            syntax.GetDiagnostics().Should().HaveIssue(
-                Issue.ERR("Proj4002", "= is unexpected.").WithSpan(0, 0, 0, 1));
-        }
-
-        [Test]
-        public void no_value()
-        {
-            var syntax = Parse.Syntax("key1 = \n");
-
-            syntax.GetDiagnostics().Should().HaveIssue(
-                Issue.ERR("Proj4002", "Value is missing.").WithSpan(0, 6, 0, 7));
-        }
-
-        [Test]
-        public void no_assign()
-        {
-            var syntax = Parse.Syntax("key1 value1\n");
-
-            syntax.GetDiagnostics().Should().HaveIssue(
-                Issue.ERR("Proj4002", "= or : is expected.").WithSpan(0, 5, 0, 11));
-        }
-
-        [Test]
-        public void  multipe_assign()
-        {
-            var syntax = Parse.Syntax("key1 = : value1\n");
-
-            syntax.GetDiagnostics().Should().HaveIssue(
-                Issue.ERR("Proj4002", ": is unexpected.").WithSpan(0, 7, 0, 8));
-        }
-
-        [Test]
-        public void Rubbish()
-        {
-            var syntax = Parse.Syntax("KeyWith Comment = #Comment");
-
-            syntax.GetDiagnostics().Should().HaveIssue(
-                Issue.ERR("Proj4002", "= or : is expected.").WithSpan(0, 8, 0, 15));
-        }
-    }
-
-    public class File_with_issue
-    {
-        [Test]
-        public void issue_251()
-        {
-            var syntax = Parse.Syntax(new FileInfo("../../../Parsing/Examples/bug_00251.ini"));
-            syntax.GetDiagnostics().Should().HaveCount(1);
-        }
-    }
-
-    public class Non_INI
-    {
-        [Test]
-        public void XML()
-        {
-            var syntax = Parse.Syntax(@"
-<Project>
-  <PropertyGroup>
-    <TargetFramework>9.0</TargetFramework>
-  </PropertyGroup>
-</Project>");
-
-            syntax.GetDiagnostics().Should().HaveCount(5);
-        }
-    }
-}
-
-file static class Parse
-{
-    public static IniFileSyntax Syntax(FileInfo file)
-    {
-        using var stream = file.OpenRead();
-
-        var tree = SyntaxTree.Load(stream);
-        var synstax = IniFileSyntax.Parse(tree);
-        synstax.Should().NotBeNull();
-        return synstax!;
-
-    }
-
-    public static IniFileSyntax Syntax(string text)
-    {
-        var tree = SyntaxTree.Parse(text);
-        var synstax = IniFileSyntax.Parse(tree);
-        synstax.Should().NotBeNull();
-        return synstax!;
-    }
+        Success = success,
+        Remaining = new { Length = remaining },
+        Tokens = new { Length = tokens },
+    };
 }

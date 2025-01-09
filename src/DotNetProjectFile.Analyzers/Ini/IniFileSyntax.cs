@@ -33,7 +33,7 @@ public sealed record IniFileSyntax : IniSyntax
     {
         try
         {
-            return IniGrammar.file
+            return IniGrammarBak.file
                 .Parse(tree.SourceText)
                 .Resolve<IniFileSyntax>(tree);
         }
