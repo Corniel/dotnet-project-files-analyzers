@@ -13,10 +13,10 @@ public abstract class Token : Tokens
 
     /// <inheritdoc />
     [Pure]
-    public sealed override ResultCollection<Lexer.Result> Tokenize(SourceSpan source) => Match(source) switch
+    public sealed override ResultCollection Tokenize(SourceSpan source) => Match(source) switch
     {
-        var len when len > 0 => ResultCollection<Lexer.Result>.Empty.Add(Lexer.Result.Successful(source.Skip(len), new SourceSpanToken(source.Take(len), Kind))),
-        _ => ResultCollection<Lexer.Result>.Empty.Add(Lexer.Result.NoMatch(source, $"Expected {Kind}.")),
+        var len when len > 0 => ResultCollection.Empty.Add(Result.Successful(source.Skip(len), new SourceSpanToken(source.Take(len), Kind))),
+        _ => ResultCollection.Empty.Add(Result.NoMatch(source, $"Expected {Kind}.")),
     };
 
     /// <summary>

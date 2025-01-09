@@ -10,10 +10,10 @@ internal sealed class Sequence(ImmutableArray<Tokens> sequances) : Tokens
 
     /// <inheritdoc />
     [Pure]
-    public override ResultCollection<Lexer.Result> Tokenize(SourceSpan source)
+    public override ResultCollection Tokenize(SourceSpan source)
     {
-        var final = ResultCollection<Lexer.Result>.Empty;
-        var currs = ResultCollection<Lexer.Result>.Empty;
+        var final = ResultCollection.Empty;
+        var currs = ResultCollection.Empty;
 
         foreach (var result in Sequances[0].Tokenize(source))
         {
@@ -29,7 +29,7 @@ internal sealed class Sequence(ImmutableArray<Tokens> sequances) : Tokens
 
         foreach (var sequance in Sequances[1..])
         {
-            var nexts = ResultCollection<Lexer.Result>.Empty;
+            var nexts = ResultCollection.Empty;
 
             foreach (var curr in currs)
             {

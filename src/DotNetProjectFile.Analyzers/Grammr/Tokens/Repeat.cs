@@ -9,16 +9,16 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
 
     /// <inheritdoc />
     [Pure]
-    public override ResultCollection<Lexer.Result> Tokenize(SourceSpan source)
+    public override ResultCollection Tokenize(SourceSpan source)
     {
-        var final = ResultCollection<Lexer.Result>.Empty;
-        var currs = ResultCollection<Lexer.Result>.Empty;
+        var final = ResultCollection.Empty;
+        var currs = ResultCollection.Empty;
 
         var occurs = 0;
 
         if (MinOccurs == 0)
         {
-            final = final.Add(Lexer.Result.Successful(source));
+            final = final.Add(Result.Successful(source));
         }
 
         foreach (var result in Tokens.Tokenize(source))
@@ -38,7 +38,7 @@ internal sealed class Repeat(Tokens tokens, int minOccurs, int maxOccurs) : Toke
 
         while (++occurs <= MaxOccurs && currs.Any())
         {
-            var nexts = ResultCollection<Lexer.Result>.Empty;
+            var nexts = ResultCollection.Empty;
 
             foreach (var curr in currs)
             {

@@ -48,6 +48,9 @@ public readonly struct SourceSpan(SourceText sourceText, TextSpan textSpan) : IE
     /// <summary>The start position.</summary>
     public int Start => Span.Start;
 
+    /// <summary>The end position.</summary>
+    public int End => Span.End;
+
     /// <summary>The length of the span.</summary>
     public int Length => Span.Length;
 

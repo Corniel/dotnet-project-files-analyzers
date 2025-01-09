@@ -10,7 +10,7 @@ public class Adds : Scenarios
     public void anything_to_empty(bool success)
     {
         var initial = Empty;
-        var updated = initial.Add(new(Left3, success));
+        var updated = initial.Add(GetResult(Left3, success));
         
         updated.Should().BeEquivalentTo([new { Success = success, Remaining = new { Length = 3 } }]);
     }
@@ -19,8 +19,8 @@ public class Adds : Scenarios
     [TestCase(false)]
     public void best_as_first(bool success)
     {
-        var initial = Empty.Add(new(Left2, true));
-        var updated = initial.Add(new(Left1, success));
+        var initial = Empty.Add(Result.Successful(Left2));
+        var updated = initial.Add(GetResult(Left1, success));
 
         updated.Should().BeEquivalentTo(
         [
@@ -32,8 +32,8 @@ public class Adds : Scenarios
     [Test]
     public void failure_as_first_on_same_remainder()
     {
-        var initial = Empty.Add(new(Left1, true));
-        var updated = initial.Add(new(Left1, false));
+        var initial = Empty.Add(GetResult(Left1, true));
+        var updated = initial.Add(GetResult(Left1, false));
 
         updated.Should().BeEquivalentTo(
         [
@@ -45,13 +45,13 @@ public class Adds : Scenarios
     [TestCase(1, 2, 3)]
     [TestCase(2, 1, 3)]
     [TestCase(3, 1, 2)]
-    public void failure_as_firstsdf_on_same_remainder(params int[] remainders)
+    public void orders_by_reaminder_length(params int[] remainders)
     {
         var initial = Empty
-            .Add(new(Source.Span(new string('*', remainders[0])), true))
-            .Add(new(Source.Span(new string('*', remainders[1])), true));
+            .Add(Result.Successful(Source.Span(new string('*', remainders[0]))))
+            .Add(Result.Successful(Source.Span(new string('*', remainders[1]))));
 
-        var updated = initial.Add(new(Source.Span(new string('*', remainders[2])), true));
+        var updated = initial.Add(Result.Successful(Source.Span(new string('*', remainders[2]))));
 
         updated.Should().BeEquivalentTo(
         [
@@ -67,8 +67,8 @@ public class Updates : Scenarios
     [Test]
     public void new_failure_with_failure_smaller_remainder()
     {
-        var initial = Empty.Add(new(Left2, false, "Existing"));
-        var updated = initial.Add(new(Left1, false, "Updated"));
+        var initial = Empty.Add(Result.NoMatch(Left2, "Existing"));
+        var updated = initial.Add(Result.NoMatch(Left1, "Updated"));
 
         updated.Should().BeEquivalentTo(
         [
@@ -79,8 +79,8 @@ public class Updates : Scenarios
     [Test]
     public void new_failure_with_successful_smaller_remainder()
     {
-        var initial = Empty.Add(new(Left2, false));
-        var updated = initial.Add(new(Left1, true));
+        var initial = Empty.Add(GetResult(Left2, false));
+        var updated = initial.Add(GetResult(Left1, true));
 
         updated.Should().BeEquivalentTo(
         [
@@ -99,20 +99,20 @@ public class Does_not_add : Scenarios
     {
         var span = Source.Span(text);
 
-        var initial = Empty.Add(new(Left1, success));
-        var updated = initial.Add(new(span, false));
+        var initial = Empty.Add(GetResult(Left1, success));
+        var updated = initial.Add(Result.Successful(span));
 
-        updated.Should().BeEquivalentTo(
-        [
-            new { Success = success, Remaining = new { Length = 1 } },
-        ]);
+        object best = updated[0];
+
+        best.Should().BeEquivalentTo(
+            new { Success = success, Remaining = new { Length = 1 } });
     }
 
     [Test]
     public void new_failure_with_equal_remainder()
     {
-        var initial = Empty.Add(new(Left1, false, "Existing"));
-        var updated = initial.Add(new(Left1, false, "Updated"));
+        var initial = Empty.Add(Result.NoMatch(Left1, "Existing"));
+        var updated = initial.Add(Result.NoMatch(Left1, "Updated"));
 
         updated.Should().BeEquivalentTo(
         [
@@ -123,11 +123,15 @@ public class Does_not_add : Scenarios
 
 public class Scenarios
 {
-    internal static readonly ResultCollection<TestResult> Empty = ResultCollection<TestResult>.Empty;
+    internal static readonly ResultCollection Empty = ResultCollection.Empty;
 
     internal static readonly SourceSpan Left1 = Source.Span("1");
     internal static readonly SourceSpan Left2 = Source.Span("22");
     internal static readonly SourceSpan Left3 = Source.Span("333");
+
+    internal static Result GetResult(SourceSpan span, bool success)
+        => success
+        ? Result.Successful(span)
+        : Result.NoMatch(span, "Failure");
 }
 
-internal readonly record struct TestResult(SourceSpan Remaining, bool Success, string? Message = null) : GrammarResult;

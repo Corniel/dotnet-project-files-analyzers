@@ -2,15 +2,14 @@ namespace Grammr;
 
 [DebuggerTypeProxy(typeof(CollectionDebugView))]
 [DebuggerDisplay("Count = {Count}")]
-public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
-    where TResult : struct, GrammarResult
+public readonly struct ResultCollection : IReadOnlyList<Result>
 {
-    public static readonly ResultCollection<TResult> Empty = new([]);
+    public static readonly ResultCollection Empty = new([]);
 
-    private ResultCollection(TResult[] items) => Items = items;
+    private ResultCollection(Result[] items) => Items = items;
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly TResult[] Items;
+    private readonly Result[] Items;
 
     /// <inheritdoc />
     public int Count => Items.Length;
@@ -18,11 +17,11 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
     public bool Success => Items.Length != 0 && Items[0].Success;
 
     /// <inheritdoc />
-    public TResult this[int index] => Items[index];
+    public Result this[int index] => Items[index];
 
     /// <summary>Creates a new instance with the result added.</summary>
     [Pure]
-    public ResultCollection<TResult> Add(TResult result)
+    public ResultCollection Add(Result result)
     {
         var next = Next(result);
 
@@ -56,7 +55,7 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
     }
 
     [Pure]
-    private ResultCollection<TResult> Next(TResult result)
+    private ResultCollection Next(Result result)
     {
         if (Count == 0)
         {
@@ -80,7 +79,7 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
         };
     }
 
-    private static ResultCollection<TResult> Sort(TResult[] items)
+    private static ResultCollection Sort(Result[] items)
     {
         Array.Sort(items, Comparer);
         return new(items);
@@ -88,7 +87,7 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
 
     /// <inheritdoc />
     [Pure]
-    public IEnumerator<TResult> GetEnumerator() => ((IReadOnlyCollection<TResult>)Items).GetEnumerator();
+    public IEnumerator<Result> GetEnumerator() => ((IReadOnlyCollection<Result>)Items).GetEnumerator();
 
     /// <inheritdoc />
     [Pure]
@@ -96,9 +95,9 @@ public readonly struct ResultCollection<TResult> : IReadOnlyList<TResult>
 
     private static readonly Sorter Comparer = new();
 
-    private sealed class Sorter : IComparer<TResult>
+    private sealed class Sorter : IComparer<Result>
     {
-        public int Compare(TResult x, TResult y)
+        public int Compare(Result x, Result y)
         {
             var compare = x.Remaining.Length.CompareTo(y.Remaining.Length);
 

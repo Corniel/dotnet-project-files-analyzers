@@ -7,7 +7,7 @@ public abstract class Tokens
 {
     /// <summary>Tokenizes the source span.</summary>
     [Pure]
-    public abstract ResultCollection<Lexer.Result> Tokenize(SourceSpan source);
+    public abstract ResultCollection Tokenize(SourceSpan source);
 
     /// <summary>Creates a switch of tokens to choose one of.</summary>
     public static Tokens operator |(Tokens l, Tokens r) => new Switch([l, r]);

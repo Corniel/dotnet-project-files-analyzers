@@ -10,9 +10,9 @@ internal sealed class Switch(ImmutableArray<Tokens> options) : Tokens
 
     /// <inheritdoc />
     [Pure]
-    public override ResultCollection<Lexer.Result> Tokenize(SourceSpan source)
+    public override ResultCollection Tokenize(SourceSpan source)
     {
-        var results = ResultCollection<Lexer.Result>.Empty;
+        var results = ResultCollection.Empty;
 
         foreach (var option in Options)
         {
