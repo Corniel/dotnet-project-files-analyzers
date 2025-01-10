@@ -11,6 +11,8 @@ public readonly struct TokenStream : IReadOnlyList<SourceSpanToken>, IEquatable<
     private readonly AppendOnlyList<Info> Items;
     private readonly SourceText SourceText;
 
+    public static readonly TokenStream None = new(AppendOnlyList<Info>.Empty, SourceText.From(string.Empty));
+
     [Pure]
     public static TokenStream New(SourceText sourceText) => new(AppendOnlyList<Info>.Empty, sourceText);
 
@@ -33,13 +35,15 @@ public readonly struct TokenStream : IReadOnlyList<SourceSpanToken>, IEquatable<
     /// <inheritdoc />
     public int Count => Items.Count;
 
+    public int Length => Count == 0 ? 0 : Items[^1].TextSpan.End;
+
     public SourceSpan Remaining
     {
         get
         {
             if (Count == 0) return new SourceSpan(SourceText);
 
-            var end = Items[^1].TextSpan.End;
+            var end = Length;
             return new SourceSpan(SourceText, new(end, SourceText.Length - end));
         }
     }

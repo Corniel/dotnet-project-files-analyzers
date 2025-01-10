@@ -94,7 +94,10 @@ public class Tokenizes
         using var file = new FileInfo("../../../../../.editorconfig").OpenText();
         var span = TokenStream.New(Source.Text(file.ReadToEnd()));
 
+        var alt = IniGrammar.file.Tokenize2(span);
+
         var tokens = IniGrammar.file.Tokenize(span);
+       
 
         var best = tokens[0];
 

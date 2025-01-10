@@ -1,3 +1,4 @@
+using DotNetProjectFile.Collections;
 using Grammr.Text;
 
 namespace Grammr;
@@ -5,6 +6,25 @@ namespace Grammr;
 /// <summary>Represents a sequence of tokens.</summary>
 public abstract class Tokens
 {
+    public ResultQueue Tokenize2(TokenStream stream) => Tokenize(stream, new());
+
+    /// <summary>Tokenizes the source span.</summary>
+    public virtual ResultQueue Tokenize(TokenStream stream, ResultQueue queue)
+    {
+        foreach (var result in Tokenize(stream))
+        {
+            if (result.Success)
+            {
+                queue.Match(result.Stream, result.Node);
+            }
+            else
+            {
+                queue.NoMatch(result.Stream, result.Message!);
+            }
+        }
+        return queue;
+    }
+
     /// <summary>Tokenizes the source span.</summary>
     [Pure]
     public abstract ResultCollection Tokenize(TokenStream stream);
@@ -31,4 +51,12 @@ public abstract class Tokens
 
     /// <summary>This grammar may match multiple times, but at least once.</summary>
     public Tokens Plus => new Repeat(this, 1, int.MaxValue);
+
+    protected static Syntax.TreeNode? Select(AppendOnlyList<Syntax.TreeNode> nodes) => nodes.Count switch
+    {
+        0 => null,
+        1 => nodes[0],
+        _ => new Syntax.Node(nodes),
+    };
+ 
 }

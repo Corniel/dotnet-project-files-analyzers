@@ -2,7 +2,7 @@ using Grammr.Text;
 
 namespace Grammr;
 
-public readonly struct Result : IEquatable<Result>
+public readonly struct Result : IEquatable<Result>, IComparable<Result>
 {
     private Result(
         Syntax.TreeNode? node,
@@ -49,6 +49,10 @@ public readonly struct Result : IEquatable<Result>
         hash ^= Stream.GetHashCode();
         return hash;
     }
+
+    /// <inheritdoc />
+    [Pure]
+    public int CompareTo(Result other) => other.Stream.Length.CompareTo(Stream.Length);
 
     [Pure]
     public static Result Successful(Syntax.TreeNode? node, TokenStream stream)

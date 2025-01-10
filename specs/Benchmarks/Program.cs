@@ -7,6 +7,9 @@ public static class Program
     public static void Main(string[] args)
     {
         BenchmarkRunner.Run<IniFile>();
+
+        //var b = new IniFile() { Index = 2 };
+        //b.Parse();
     }
 
     public static void All()

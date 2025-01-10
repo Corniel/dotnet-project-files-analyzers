@@ -12,6 +12,23 @@ public abstract class Token : Tokens
     public string Kind { get; }
 
     /// <inheritdoc />
+    public override ResultQueue Tokenize(TokenStream stream, ResultQueue queue)
+    {
+        var len = Match(stream.Remaining);
+        if (len > 0)
+        {
+            var add = stream.Add(len, Kind);
+            var token = new SourceSpanToken(add[^1].SourceSpan, Kind);
+            var node = new Syntax.Token(token);
+            return queue.Match(add, node);
+        }
+        else
+        {
+            return queue.NoMatch(stream, $"Expected {Kind}.");
+        }
+    }
+
+    /// <inheritdoc />
     [Pure]
     public sealed override ResultCollection Tokenize(TokenStream stream)
     {

@@ -6,7 +6,7 @@ namespace Benchmarks;
 
 public class IniFile
 {
-    private static readonly string root = string.Join("/", Enumerable.Repeat("..", 7)) + "/Files/";
+    private static readonly string root = "C:\\code\\dotnet-project-file-analyzers\\specs\\Benchmarks\\Files\\";// string.Join("/", Enumerable.Repeat("..", 7)) + "/Files/";
 
     private readonly List<SourceText> Spans = [];
     
@@ -21,7 +21,7 @@ public class IniFile
         }
     }
 
-    [Params(0, 1, 2)]
+    [Params(/*0, 1,*/ 2)]
     public int Index { get; set; }
 
     [Benchmark]
