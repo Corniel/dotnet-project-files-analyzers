@@ -21,7 +21,7 @@ public class IniFile
         }
     }
 
-    [Params(/*0, 1,*/ 2)]
+    [Params(0, 1, 2)]
     public int Index { get; set; }
 
     [Benchmark]

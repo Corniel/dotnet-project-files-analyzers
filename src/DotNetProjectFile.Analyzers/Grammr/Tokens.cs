@@ -26,7 +26,7 @@ public abstract class Tokens
 #endif
 
     /// <summary>The grammar may or may not match.</summary>
-    public Tokens Option => new Repeat(this, 0, 1);
+    public virtual Tokens Option => new Repeat(this, 0, 1);
 
     /// <summary>This grammar may match multiple times.</summary>
     public Tokens Star => new Repeat(this, 0, int.MaxValue);

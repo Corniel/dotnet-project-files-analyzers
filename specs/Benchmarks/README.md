@@ -18,6 +18,13 @@ analyzers.
 |   36 LoC |    36.30 us |   1,0 µs/LoC |
 | 1220 LoC | 5,692.83 us |   4,7 µs/LoC |
 
+| Method | Index | Mean          | Error         | StdDev        |
+|------- |------ |--------------:|--------------:|--------------:|
+| Parse  | 0     |      93.69 us |      1.809 us |      3.121 us |
+| Parse  | 1     |     104.40 us |      1.943 us |      3.025 us |
+| Parse  | 2     | 560,238.32 us | 10,998.185 us | 22,957.309 us |
+
+
 ## Parsing Globs
 The purpose was never speed, 
 | Method               | Expression           | Mean      |

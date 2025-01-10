@@ -12,14 +12,17 @@ public abstract class Token : Tokens
     public string Kind { get; }
 
     /// <inheritdoc />
+    public override Tokens Option => new Optional(this);
+
+    /// <inheritdoc />
     public override ResultQueue Tokenize(TokenStream stream, ResultQueue queue)
     {
         var len = Match(stream.Remaining);
         if (len > 0)
         {
             var add = stream.Add(len, Kind);
-            var token = new SourceSpanToken(add[stream.Count].SourceSpan, Kind);
-            var node = new Syntax.Token(token);
+            var span = new SourceSpanToken(add[stream.Count].SourceSpan, Kind);
+            var node = new Syntax.Token(span);
             return queue.Match(add, node);
         }
         else
@@ -37,4 +40,23 @@ public abstract class Token : Tokens
     /// </param>
     [Pure]
     public abstract int Match(SourceSpan source);
+
+    private sealed class Optional(Token token) : Tokens
+    {
+        public override ResultQueue Tokenize(TokenStream stream, ResultQueue queue)
+        {
+            var len = token.Match(stream.Remaining);
+            if (len > 0)
+            {
+                var add = stream.Add(len, token.Kind);
+                var span = new SourceSpanToken(add[stream.Count].SourceSpan, token.Kind);
+                var node = new Syntax.Token(span);
+                return queue.Match(add, node);
+            }
+            else
+            {
+                return queue.Match(stream, null);
+            }
+        }
+    }
 }

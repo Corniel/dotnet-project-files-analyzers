@@ -59,6 +59,10 @@ public readonly struct Result : IEquatable<Result>, IComparable<Result>
         => new(node, stream, true, null);
 
     [Pure]
+    public static Result Match(TokenStream stream, Syntax.TreeNode? node = null)
+      => new(node, stream, true, null);
+
+    [Pure]
     public static Result NoMatch(TokenStream stream, string message)
         => new(null, stream, false, message);
 }
