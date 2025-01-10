@@ -6,28 +6,10 @@ namespace Grammr;
 /// <summary>Represents a sequence of tokens.</summary>
 public abstract class Tokens
 {
-    public ResultQueue Tokenize2(TokenStream stream) => Tokenize(stream, new());
+    public ResultQueue Tokenize(TokenStream stream) => Tokenize(stream, new());
 
     /// <summary>Tokenizes the source span.</summary>
-    public virtual ResultQueue Tokenize(TokenStream stream, ResultQueue queue)
-    {
-        foreach (var result in Tokenize(stream))
-        {
-            if (result.Success)
-            {
-                queue.Match(result.Stream, result.Node);
-            }
-            else
-            {
-                queue.NoMatch(result.Stream, result.Message!);
-            }
-        }
-        return queue;
-    }
-
-    /// <summary>Tokenizes the source span.</summary>
-    [Pure]
-    public abstract ResultCollection Tokenize(TokenStream stream);
+    public abstract ResultQueue Tokenize(TokenStream stream, ResultQueue queue);
 
     /// <summary>Creates a switch of tokens to choose one of.</summary>
     public static Tokens operator |(Tokens l, Tokens r) => new Switch([l, r]);
@@ -58,5 +40,4 @@ public abstract class Tokens
         1 => nodes[0],
         _ => new Syntax.Node(nodes),
     };
- 
 }

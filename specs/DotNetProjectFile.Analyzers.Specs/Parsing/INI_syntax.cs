@@ -15,7 +15,7 @@ public class Tokenizes
 
         var tokens = IniGrammar.file.Tokenize(span);
 
-        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 5));
+        tokens.Outcome.Should().BeEquivalentTo(Result(true, 0, 5));
     }
 
     [Test]
@@ -24,8 +24,7 @@ public class Tokenizes
         var span = TokenStream.New(Source.Text("[My Header] # comment here.\r\n"));
 
         var tokens = IniGrammar.file.Tokenize(span);
-
-        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 6));
+        tokens.Outcome.Should().BeEquivalentTo(Result(true, 0, 6));
     }
 
     [Test]
@@ -35,7 +34,7 @@ public class Tokenizes
 
         var tokens = IniGrammar.file.Tokenize(span);
 
-        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 2));
+        tokens.Outcome.Should().BeEquivalentTo(Result(true, 0, 2));
     }
 
     [Test]
@@ -45,7 +44,7 @@ public class Tokenizes
 
         var tokens = IniGrammar.file.Tokenize(span);
 
-        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 6));
+        tokens.Outcome.Should().BeEquivalentTo(Result(true, 0, 6));
     }
 
     [Test]
@@ -55,7 +54,7 @@ public class Tokenizes
 
         var tokens = IniGrammar.file.Tokenize(span);
 
-        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 7));
+        tokens.Outcome.Should().BeEquivalentTo(Result(true, 0, 7));
     }
 
     [Test]
@@ -65,7 +64,7 @@ public class Tokenizes
 
         var tokens = IniGrammar.file.Tokenize(span);
 
-        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 6));
+        tokens.Outcome.Should().BeEquivalentTo(Result(true, 0, 6));
     }
 
     [Test]
@@ -75,7 +74,7 @@ public class Tokenizes
 
         var tokens = IniGrammar.file.Tokenize(span);
 
-        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 8));
+        tokens.Outcome.Should().BeEquivalentTo(Result(true, 0, 8));
     }
 
     [Test]
@@ -85,7 +84,7 @@ public class Tokenizes
 
         var tokens = IniGrammar.file.Tokenize(span);
 
-        ((object)tokens[0]).Should().BeEquivalentTo(Result(true, 0, 4));
+        tokens.Outcome.Should().BeEquivalentTo(Result(true, 0, 4));
     }
 
     [Test]
@@ -94,12 +93,10 @@ public class Tokenizes
         using var file = new FileInfo("../../../../../.editorconfig").OpenText();
         var span = TokenStream.New(Source.Text(file.ReadToEnd()));
 
-        var alt = IniGrammar.file.Tokenize2(span);
-
         var tokens = IniGrammar.file.Tokenize(span);
        
 
-        var best = tokens[0];
+        var best = tokens.Outcome;
 
         var result = string.Concat(best.Stream.Select(t => t.Text));
         result.Should().Be(span.Text);

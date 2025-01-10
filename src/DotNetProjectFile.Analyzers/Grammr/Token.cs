@@ -18,31 +18,13 @@ public abstract class Token : Tokens
         if (len > 0)
         {
             var add = stream.Add(len, Kind);
-            var token = new SourceSpanToken(add[^1].SourceSpan, Kind);
+            var token = new SourceSpanToken(add[stream.Count].SourceSpan, Kind);
             var node = new Syntax.Token(token);
             return queue.Match(add, node);
         }
         else
         {
             return queue.NoMatch(stream, $"Expected {Kind}.");
-        }
-    }
-
-    /// <inheritdoc />
-    [Pure]
-    public sealed override ResultCollection Tokenize(TokenStream stream)
-    {
-        var len = Match(stream.Remaining);
-        if (len > 0)
-        {
-            var add = stream.Add(len, Kind);
-            var token = new SourceSpanToken(add[^1].SourceSpan, Kind);
-            var node = new Syntax.Token(token);
-            return ResultCollection.Empty.Add(Result.Successful(node, add));
-        }
-        else
-        {
-            return ResultCollection.Empty.Add(Result.NoMatch(stream, $"Expected {Kind}."));
         }
     }
 

@@ -83,8 +83,7 @@ public class Tokenizes : Grammar
         {
             var results = Bs.Tokenize(TokenStream.New(Source.Text("BCDE")));
 
-            object result = results[0];
-            result.Should().BeEquivalentTo(
+            results.Outcome.Should().BeEquivalentTo(
             new
             {
                 Stream = new[] { new { Text = "B", Kind = "B" } },

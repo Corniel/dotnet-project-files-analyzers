@@ -11,29 +11,18 @@ internal sealed class Switch(ImmutableArray<Tokens> options) : Tokens
     /// <inheritdoc />
     public override ResultQueue Tokenize(TokenStream stream, ResultQueue queue)
     {
+        var temp = new ResultQueue();
+
         foreach (var option in Options)
         {
-            foreach (var result in option.Tokenize(stream))
+            var results = option.Tokenize(stream, temp.Clear());
+            queue.NoMatch(results.Failure.Stream, results.Failure.Message);
+
+            foreach (var result in results.DequeueAll())
             {
                 queue.Enqueue(result);
             }
         }
         return queue;
-    }
-
-    /// <inheritdoc />
-    [Pure]
-    public override ResultCollection Tokenize(TokenStream stream)
-    {
-        var results = ResultCollection.Empty;
-
-        foreach (var option in Options)
-        {
-            foreach (var result in option.Tokenize(stream))
-            {
-                results = results.Add(result);
-            }
-        }
-        return results;
     }
 }

@@ -25,5 +25,5 @@ public class IniFile
     public int Index { get; set; }
 
     [Benchmark]
-    public Grammr.Syntax.TreeNode? Parse() => IniGrammar.file.Tokenize(TokenStream.New(Spans[Index]))[0].Node;
+    public Grammr.Syntax.TreeNode? Parse() => IniGrammar.file.Tokenize(TokenStream.New(Spans[Index])).Outcome.Node;
 }

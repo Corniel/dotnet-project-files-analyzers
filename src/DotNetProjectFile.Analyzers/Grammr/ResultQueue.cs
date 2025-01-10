@@ -8,11 +8,11 @@ public sealed class ResultQueue : IReadOnlyCollection<Result>
 {
     private readonly List<Result> Queue = [];
 
-    public Result Failure { get; private set; } = Result.Successful(null, TokenStream.None);
+    public Result Failure { get; private set; } = Result.NoMatch(TokenStream.None, null!);
 
     public int Count => Queue.Count;
 
-    public Result Best => Count == 0 || Queue[^1].Stream.Length < Failure.Stream.Length
+    public Result Outcome => Count == 0 || Queue[^1].Stream.Length < Failure.Stream.Length
         ? Failure
         : Queue[^1];
 
@@ -33,7 +33,7 @@ public sealed class ResultQueue : IReadOnlyCollection<Result>
 
     public ResultQueue NoMatch(TokenStream stream, string? message)
     {
-        if (stream.Length > Failure.Stream.Length)
+        if (stream.Length > Failure.Stream.Length || Failure.Message is null)
         {
             Failure = Result.NoMatch(stream, message!);
         }
@@ -70,7 +70,7 @@ public sealed class ResultQueue : IReadOnlyCollection<Result>
     public ResultQueue Clear()
     {
         Queue.Clear();
-        Failure = Result.Successful(null, TokenStream.None);
+        Failure = Result.NoMatch(TokenStream.None, null);
         return this;
     }
 

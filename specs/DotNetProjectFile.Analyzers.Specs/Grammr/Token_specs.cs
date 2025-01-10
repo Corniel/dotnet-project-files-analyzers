@@ -95,14 +95,14 @@ public class Does_not_match : Grammar
     {
         var results = C.Tokenize(TokenStream.New(Source.Text("ABCDE")));
 
-        results.Should().BeEquivalentTo([
+        results.Outcome.Should().BeEquivalentTo(
             new
             {
                 Stream = Array.Empty<object>(),
                 Success = false,
                 Remaining = new { Text = "ABCDE" },
                 Message = "Expected C.",
-            }]);
+            });
     }
 
     [Test]
@@ -110,14 +110,14 @@ public class Does_not_match : Grammar
     {
         var results = ABC.Tokenize(TokenStream.New(Source.Text("BCDEF")));
 
-        results.Should().BeEquivalentTo([
+        results.Outcome.Should().BeEquivalentTo(
             new
             {
                 Stream = Array.Empty<object>(),
                 Success = false,
                 Remaining = new { Text = "BCDEF" },
                 Message = "Expected ABC.",
-            }]);
+            });
     }
 
     [Test]
@@ -125,14 +125,14 @@ public class Does_not_match : Grammar
     {
         var results = WhiteSpace.Tokenize(TokenStream.New(Source.Text("ABC\nCDE")));
 
-        results.Should().BeEquivalentTo([
+        results.Outcome.Should().BeEquivalentTo(
             new
             {
                 Stream = Array.Empty<object>(),
                 Success = false,
                 Remaining = new { Text = "ABC\nCDE" },
                 Message = "Expected WhiteSpace.",
-            }]);
+            });
     }
 
     [Test]
@@ -140,7 +140,7 @@ public class Does_not_match : Grammar
     {
         var results = Digits.Tokenize(TokenStream.New(Source.Text("Test42d")));
 
-        results.Should().BeEquivalentTo([
+        results.Outcome.Should().BeEquivalentTo(
             new
             {
 
@@ -148,6 +148,6 @@ public class Does_not_match : Grammar
                 Success = false,
                 Remaining = new { Text = "Test42d" },
                 Message = "Expected Digits.",
-            }]);
+            });
     }
 }
