@@ -6,10 +6,10 @@ public sealed class EmptySection() : IniFileAnalyzer(Rule.Ini.EmptySection)
     protected override void Register(IniFileAnalysisContext context)
     {
         foreach (var header in context.File.Syntax.Sections
-            .Where(s => s.KeyValuePairs.None())
+            .Where(s => s.Pairs.None())
             .Select(s => s.Header!))
         {
-            context.ReportDiagnostic(Descriptor, context.File, header.LinePositionSpan, header.Text);
+            context.ReportDiagnostic(Descriptor, header.GetLocation(), header.HeaderText);
         }
     }
 }

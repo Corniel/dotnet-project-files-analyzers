@@ -60,7 +60,7 @@ public sealed partial class ProjectFiles
     {
         var file = IOFile.Parse(context.AdditionalFile.Path);
         return Is.Ini(file)
-            ? IniFiles.TryGetOrUpdate(file, _ => new IniFile(IniFileSyntax.Parse(Syntax.SyntaxTree.From(context.AdditionalFile))))
+            ? IniFiles.TryGetOrUpdate(file, _ => Ini.IniFile.Load(file))
             : null;
     }
 
@@ -84,7 +84,7 @@ public sealed partial class ProjectFiles
         => GitIgnoreSyntax.Parse(Syntax.SyntaxTree.Load(file.OpenRead()));
 
     private static IniFile Create_IniFile(IOFile file)
-        => new(IniFileSyntax.Parse(Syntax.SyntaxTree.Load(file.OpenRead())));
+        => Ini.IniFile.Load(file);
 
     private MsBuildProject Create_MsBuildProject(IOFile file)
        => MsBuild.Project.Load(file, this);

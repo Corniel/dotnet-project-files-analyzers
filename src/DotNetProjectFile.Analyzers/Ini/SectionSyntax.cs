@@ -1,35 +1,13 @@
-using DotNetProjectFile.Parsing;
-using DotNetProjectFile.Syntax;
+using Antlr4;
 
 namespace DotNetProjectFile.Ini;
 
-[DebuggerDisplay("{DebuggerDisplay}")]
-public sealed record SectionSyntax : IniSyntax
+[DebuggerDisplay("Header = {Header?.Text}, Pairs = {Pairs.Count}")]
+public sealed class SectionSyntax(
+    HeaderSyntax? header,
+    IReadOnlyList<KeyValuePairSyntax> pairs)
 {
-    public HeaderSyntax? Header => Children.FirstOrDefault() as HeaderSyntax;
+    public HeaderSyntax? Header { get; } = header;
 
-    public SyntaxNodeCollection<KeyValuePairSyntax> KeyValuePairs => new(this);
-
-    public IEnumerable<KeyValuePair<string, string>> Kvps => KeyValuePairs
-        .Where(kvp => kvp.GetDiagnostics().None())
-        .Select(kvp => kvp.Kvp)
-        .OfType<KeyValuePair<string, string>>();
-
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    protected override string DebuggerDisplay => $"Syntax = Section, KVP's = {KeyValuePairs.Count}";
-
-    public override IEnumerable<Diagnostic> GetDiagnostics() => Children.SelectMany(c => c.GetDiagnostics());
-
-    public static IniSyntax New(Parser parser)
-    {
-        var ini = parser.Syntax as IniFileSyntax ?? new IniFileSyntax { Children = [new SectionSyntax()] };
-
-        return ini with
-        {
-            Children = ini.Sections.WithLast(s => s with
-            {
-                Span = s.Span + parser.Span,
-            }),
-        };
-    }
+    public IReadOnlyList<KeyValuePairSyntax> Pairs { get; } = pairs;
 }

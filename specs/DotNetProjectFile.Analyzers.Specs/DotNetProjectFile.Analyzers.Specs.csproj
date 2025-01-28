@@ -47,6 +47,7 @@
     <None Include="../../projects/*/*.vbproj" Visible="true" Link="Projects/VB/%(Filename)%(Extension)" />
     <None Include="../../projects/*/*.resx" Visible="true" Link="Projects/RESX/%(Filename)%(Extension)" />
     <None Include="../../projects/*/*.props" Visible="true" Link="Projects/Props/%(Directory)/%(Filename)%(Extension)" />
+    <None Include="../../projects/*/.editorconfig" Visible="true" Link="Projects/EditorConfig/%(Directory)/.editorconfig" />
   </ItemGroup>
 
   <ItemGroup Label="Analyzers">

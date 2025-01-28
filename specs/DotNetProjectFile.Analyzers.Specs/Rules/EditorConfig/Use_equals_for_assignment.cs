@@ -8,8 +8,8 @@ public class Reports
     public void colon_signs() => new UseEqualsAssign()
         .ForProject("InvalidEditorConfigHeaders.cs")
         .HasIssues(
-            Issue.WRN("Proj4051", "Use = instead.").WithSpan(13, 12, 13, 13),
-            Issue.WRN("Proj4051", "Use = instead.").WithSpan(14, 11, 14, 12));
+            Issue.WRN("Proj4051", "Use = instead.").WithSpan(13, 12, 13, 12).WithPath(".editorconfig"),
+            Issue.WRN("Proj4051", "Use = instead.").WithSpan(14, 11, 14, 11).WithPath(".editorconfig"));
 }
 
 public class Guards

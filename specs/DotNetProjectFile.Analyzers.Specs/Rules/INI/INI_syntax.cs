@@ -8,12 +8,13 @@ public class Reports
     public void errors() => new IniSyntaxAnalyzer()
         .ForProject("IniSyntaxErrors.cs")
         .HasIssues(
-            new Issue("Proj4001", "] is expected." /*..,,,.*/).WithSpan(02, 10, 03, 00),
-            new Issue("Proj4002", "= or : is expected." /*.*/).WithSpan(03, 22, 03, 27),
-            new Issue("Proj4002", "Value is missing." /*...*/).WithSpan(04, 16, 04, 17),
-            new Issue("Proj4002", "= or : is expected." /*.*/).WithSpan(10, 08, 10, 15),
-            new Issue("Proj4001", "] is unexpected." /*......*/).WithSpan(12, 01, 12, 02),
-            new Issue("Proj4001", "[ is unexpected." /*....*/).WithSpan(15, 01, 15, 02));
+            new Issue("Proj4000", "extraneous input 'Comment' expecting ASSIGN.").WithSpan(10, 08, 10, 14),
+#if Is_Windows
+            new Issue("Proj4000", @"missing TEXT at '\r\n'.").WithSpan(10, 26, 10, 27),
+#else
+            new Issue("Proj4000", @"missing TEXT at '\n'.").WithSpan(10, 26, 10, 26),
+#endif
+            new Issue("Proj4000", "extraneous input ']' expecting {TEXT, ASSIGN, '[', NL, COMMENT, WS}.").WithSpan(12, 01, 12, 01));
 }
 
 public class Guards

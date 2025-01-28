@@ -6,11 +6,11 @@ public static partial class Rule
 {
     public static class Ini
     {
-        public static DiagnosticDescriptor Invalid => New(
+        public static DiagnosticDescriptor SyntaxError => New(
            id: 4000,
            title: "Invalid INI file",
-           message: "File could not be parsed",
-           description: "A INI header should have the format [<Header>].",
+           message: "{0}.",
+           description: "Syntax Error",
            tags: ["INI", "syntax error"],
            category: Category.SyntaxError,
            isEnabled: false);

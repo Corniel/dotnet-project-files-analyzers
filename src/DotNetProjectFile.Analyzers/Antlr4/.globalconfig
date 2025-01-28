@@ -1,4 +1,0 @@
-is_global = true
-
-# Disabled due to the fact that they are cause issues with the imported ANTLR4 code
-dotnet_analyzer_diagnostic.severity = none

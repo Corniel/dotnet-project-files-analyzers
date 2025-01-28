@@ -4,13 +4,13 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Benchmarks;
 
-public class GrammrParsing
+public class IniParsing
 {
     private static readonly string root = string.Join("/", Enumerable.Repeat("..", 7)) + "/Files/";
 
     private readonly List<SourceText> Sources = [];
     
-    public GrammrParsing()
+    public IniParsing()
     {
         string[] files = [ "ini-0027-lines.ini", "ini-0036-lines.ini", "ini-1220-lines.ini" ];
         foreach(var file in files)
@@ -24,7 +24,10 @@ public class GrammrParsing
     public int Index { get; set; }
 
     [Benchmark]
-    public Grammr.Syntax.Node Parse() => IniGrammar.file.Parse(TokenStream.From(Sources[Index])).Root;
+    public Grammr.Syntax.Node HomeGrown() => IniGrammar.file.Parse(TokenStream.From(Sources[Index])).Root;
+
+    [Benchmark]
+    public DotNetProjectFile.Ini.IniFileSyntax ANTLR4() => DotNetProjectFile.Ini.IniFileSyntax.Parse(Sources[Index]);
 }
 
 file sealed class IniGrammar : Grammar

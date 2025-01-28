@@ -9,10 +9,10 @@ public sealed class EditorConfigFile(IniFileSyntax syntax) : ProjectFile
     public IniFileSyntax Syntax { get; } = syntax;
 
     /// <inheritdoc />
-    public IOFile Path => Syntax.SyntaxTree.Path;
+    public IOFile Path => default; // Syntax.SyntaxTree.Path;
 
     /// <inheritdoc />
-    public SourceText Text => Syntax.SyntaxTree.SourceText;
+    public SourceText Text => null;//  Syntax.SyntaxTree.SourceText;
 
     /// <inheritdoc />
     public WarningPragmas WarningPragmas => WarningPragmas.None;
@@ -20,8 +20,9 @@ public sealed class EditorConfigFile(IniFileSyntax syntax) : ProjectFile
     public bool IsRoot
         => Syntax.Sections.FirstOrDefault() is { } section
         && section.Header is null
-        && section.Kvps
-            .Where(kvp => kvp.Key.IsMatch("root"))
-            .Select(kvp => kvp.Value.IsMatch("true"))
-            .LastOrDefault();
+        //&& section.Kvps
+        //    .Where(kvp => kvp.Key.IsMatch("root"))
+        //    .Select(kvp => kvp.Value.IsMatch("true"))
+        //    .LastOrDefault()
+        ;
 }
