@@ -105,6 +105,7 @@ The package contains analyzers that analyze .NET project files.
 ### Other
 * [**Proj1100** Avoid using Moq](https://dotnet-project-file-analyzers.github.io/rules/Proj1100.html)
 * [**Proj1101** Package references should have stable versions](https://dotnet-project-file-analyzers.github.io/rules/Proj1101.html)
+* [**Proj1102** Use Coverlet Collector or MSBuild](https://dotnet-project-file-analyzers.github.io/rules/Proj1102.html)
 * [**Proj1200** Exclude private assets as project file dependency](https://dotnet-project-file-analyzers.github.io/rules/Proj1200.html)
 
 ## Resource file rules

@@ -59,6 +59,8 @@
     <Version>1.5.6</Version>
     <PackageReleaseNotes>
       <![CDATA[
+ToBeReleased:
+- Proj1102: Use Coverlet Collector or MSBuild. (NEW RULE)
 v1.5.6
 - Proj0033: Project reference includes should exist. (NEW RULE)
 - Proj0201: VersionPrefix is now allowed as alternative to Version. (FP)

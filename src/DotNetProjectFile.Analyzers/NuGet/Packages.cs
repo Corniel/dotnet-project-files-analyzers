@@ -2,6 +2,8 @@ namespace DotNetProjectFile.NuGet;
 
 public sealed class Packages : IReadOnlyCollection<Package>
 {
+    public static readonly BuildExtension coverlet_collector = new("coverlet.collector");
+    public static readonly BuildExtension coverlet_msbuild = new("coverlet.msbuild");
     public static readonly BuildExtension Microsoft_NET_Test_Sdk = new("Microsoft.NET.Test.Sdk");
     public static readonly BuildExtension Microsoft_Sbom_Targets = new("Microsoft.Sbom.Targets");
     public static readonly BuildExtension TUnit = new("TUnit");
@@ -100,8 +102,8 @@ public sealed class Packages : IReadOnlyCollection<Package>
         new SourceGenerator("Vogen"),
 
         // Build extensions
-        new BuildExtension("coverlet.collector"),
-        new BuildExtension("coverlet.msbuild"),
+        coverlet_collector,
+        coverlet_msbuild,
         new BuildExtension("DotNetProjectFile.Analyzers.Sdk"),
         new BuildExtension("Grpc.Tools"),
         new BuildExtension("JetBrains.Annotations"),
